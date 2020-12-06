@@ -13,7 +13,6 @@ BLOCOS * lerCodsSimbs(FILE *fp,BLOCOS * bL ,int id){
     
     
     fscanf(fp,"%d",&tam); //lê tamanho do bloco
-    printf("TAMANHO: %d\n",tam);
     fgetc(fp);//le o @ 
 
     for(simb=0;flag!='@';simb++){
@@ -29,13 +28,11 @@ BLOCOS * lerCodsSimbs(FILE *fp,BLOCOS * bL ,int id){
             seq[i] = '\0';
             seqL = seq;
             l = addSeqL(simb,seqL,l);
-            printf("%s\n",seq);
         }
        
                               
     }
-        
-   
+          
    
     b = addBloco(id,tam,l,bL);
     
@@ -76,5 +73,60 @@ return pBlocos;
 
 }
 
+//le e descodifca rle gravando o mesmo(output original)
+void lerRle(char* filename){
+FILE * fp; //ficheiro a ler
+FILE * fp2; //ficheiro a gravar
+char letra;
+char buffer;
+char nFile[strlen(filename)-3];
 
-  
+editaNome(filename,nFile);
+
+fp = fopen(filename,"rb");
+fp2 = fopen(nFile,"w");
+
+buffer = getc(fp);
+
+
+while(buffer!=EOF){
+
+    if(buffer!=0)
+        fprintf(fp2,"%c",buffer);
+    else{
+        letra = getc(fp);
+        buffer = getc(fp);
+        
+
+        for(unsigned char i=0;i<buffer;i++){
+            fprintf(fp2,"%c",letra);
+        }
+    }
+
+
+    buffer = getc(fp);
+}
+
+fclose(fp);
+fclose(fp2);
+}
+
+//cortar o .cod do filename
+void editaNome(char * filename,char *nFilename){
+    int flag=0;
+
+    for(int i=0;flag<2;i++){
+        if(filename[i]=='.')flag++;
+
+        if(flag<2){
+            nFilename[i] = filename[i];
+        }
+            
+        else
+           nFilename[i] = '\0';
+
+        
+    }  
+
+
+}

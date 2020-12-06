@@ -1,0 +1,37 @@
+O que ser necessário fazer????????
+
+        LEITURA
+>>>>>>>>ler .cod 
+        -(feito) 
+        -sendo que falta escolher onde guardar as sequencias binárias
+
+>>>>>>>>ler .shaf 
+        -têm que ser ler em binário o ficheiro
+        -guardar a sequencias binarias dos blocos
+
+>>>>>>>>ler .freq
+
+>>>>>>>>ler .RLE
+        (feito) 
+
+
+
+        DESCODIFAÇÃO
+>>>>>>>>Descodificar por matrizes de bytes
+        -cancro
+        -n percebemos
+        -haveremos de entender
+        
+>>>>>>>>Descodificação RLE
+        -fazer o inverso da codificação RLE
+        (feito)
+
+
+        ESCRITA
+>>>>>>>>>Escrita ficheiro original
+                (feito)
+
+----
+
+>>>>>>>>>Otimização por execução paralela (Multi threads)
+        -Grande senão só se houver tempo e cabeça
