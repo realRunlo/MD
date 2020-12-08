@@ -74,48 +74,51 @@ return pBlocos;
 
 }
 
-int  lerFreq(char *filename,int * tamanhos){
+int * lerFreq(char *filename,int * nBlocos){
 
-char tipo,c;
-int i=0,nBlocos;
-FILE *fp;
-fp = fopen(filename,"r");
+    char tipo,c;
+    int i=0;
+    FILE *fp;
+    fp = fopen(filename,"r");
 
+    fgetc(fp);//le o @ 
+    fscanf(fp,"%c",&tipo); //guardar o tipo do ficheiro rle|n
+    fgetc(fp);//le o @ 
+    fscanf(fp,"%d",nBlocos);//guardar num de blocos
+    fgetc(fp);//le o @ 
+   
+    int *tamanhos = (int *) malloc(sizeof(int)*(*nBlocos));
+    
+    do{
+        fscanf(fp,"%d",&tamanhos[i]);
+        fgetc(fp);
+        while(c!='@'){
+            c = fgetc(fp);
+         }
+        c='R';
+     i++;
+    } while(i<*nBlocos);
 
-fgetc(fp);//le o @ 
-fscanf(fp,"%c",&tipo); //guardar o tipo do ficheiro rle|n
-fgetc(fp);//le o @ 
-fscanf(fp,"%d",&nBlocos);//guardar num de blocos
-fgetc(fp);//le o @ 
+    fclose(fp);
+    printf("saiu\n");
 
-do{
-
-    fscanf(fp,"%d",&tamanhos[i]);
-    fgetc(fp);
-    while(c!='@'){
-        c = fgetc(fp);
-    }
-    c='R';
-    i++;
-} while(i<nBlocos);
-
-fclose(fp);
-
- return nBlocos;
+    return tamanhos;
 }
 
 
 
 //le um bloco binario de tamanho N e devolve onde o mesmo está guardado
-char * leBloco(FILE *fp,int N){
+char * leBloco(FILE *fp,int n){
     printf("ler bloco\n");
 
-char * BUFFER;
+    char *BUFFER = (char *) malloc(sizeof(char)*n);
 
-fread(&BUFFER,sizeof(char),N,fp);
+    fread(BUFFER,sizeof(char),n,fp);
+    for(int i=0;i<n;i++)
+        printf("%c",BUFFER[i]);
 
     printf("bloco lido\n");
-return BUFFER;
+    return BUFFER;
 }
 
 void descompBlocoRle(FILE *fp,char *bloco,int tamanho){
@@ -139,7 +142,7 @@ char letra,nreps;
 void fRle(char * filenameRle,char * filenameFreq){
     FILE * fp;
     FILE * fp2;
-    char * originalFilename;
+    char originalFilename[strlen(filenameRle)-3];
     char * bloco;
     int nBlocos;
     int *tamanhos;
@@ -147,18 +150,20 @@ void fRle(char * filenameRle,char * filenameFreq){
     editaNome(filenameRle,originalFilename);
   
     fp = fopen(filenameRle,"rb");
-    if(fp)printf("abriu");else printf("erro");
+    if(fp)printf("abriu\n");else printf("erro");
     
     fp2 = fopen(originalFilename,"w");
-    if(fp2)printf("abriu");else printf("erro");
+    if(fp2)printf("abriu\n");else printf("erro");
+   
 
-    nBlocos = lerFreq(filenameFreq,tamanhos);
-
+    tamanhos = lerFreq(filenameFreq,&nBlocos);
+  
     for(int i=0;i<nBlocos;i++){
+        printf("ciclo\n");
         bloco = leBloco(fp,tamanhos[i]);
         descompBlocoRle(fp2,bloco,tamanhos[i]);
     }
-
+    
    fclose(fp);
    fclose(fp2);
 
@@ -168,8 +173,9 @@ void fRle(char * filenameRle,char * filenameFreq){
 void editaNome(char * filename,char *nFilename){
     
     int flag=0;
-    printf("%s",filename); 
+    
     for(int i=0;flag<2;i++){
+        
         
         if(filename[i]=='.')flag++;
 
@@ -182,8 +188,9 @@ void editaNome(char * filename,char *nFilename){
         
     } 
     
-    printf("saiu");
+   
 
 
 }
+
 

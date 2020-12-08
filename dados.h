@@ -42,6 +42,8 @@ typedef struct blocos{
 
 }BLOCOS;
 
+
+
 SEQBINL * initSeqL();
 BLOCOS * initBlocos();
 BLOCOS * addBloco(int id,int tam,SEQBINL * l,BLOCOS * b);
