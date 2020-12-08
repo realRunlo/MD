@@ -1,9 +1,9 @@
 #include "leitura.h"
 
 int main(int argc, char **argv){
-
-//lerCod(argv[1]);
-//lerRle(argv[1]);
+//INPUT: ficheiro(.shaf ou.rle)  nada|s|r
+//printf("%s %s",argv[1],argv[2]);
+fRle(argv[1],argv[2]);
 
 return 0;
 }

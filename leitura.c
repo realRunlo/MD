@@ -19,6 +19,7 @@ BLOCOS * lerCodsSimbs(FILE *fp,BLOCOS * bL ,int id){
         bit = fgetc(fp);
         flag = bit;
 
+//está a ler bit a bit não há forma melhor
         if(bit!=';' && bit!='@'){
             for(bit,i=0;bit!=';';i++){
             if(bit!=';')
@@ -73,60 +74,116 @@ return pBlocos;
 
 }
 
-//le e descodifca rle gravando o mesmo(output original)
-void lerRle(char* filename){
-FILE * fp; //ficheiro a ler
-FILE * fp2; //ficheiro a gravar
-char letra;
-char buffer;
-char nFile[strlen(filename)-3];
+int  lerFreq(char *filename,int * tamanhos){
 
-editaNome(filename,nFile);
-
-fp = fopen(filename,"rb");
-fp2 = fopen(nFile,"w");
-
-buffer = getc(fp);
+char tipo,c;
+int i=0,nBlocos;
+FILE *fp;
+fp = fopen(filename,"r");
 
 
-while(buffer!=EOF){
+fgetc(fp);//le o @ 
+fscanf(fp,"%c",&tipo); //guardar o tipo do ficheiro rle|n
+fgetc(fp);//le o @ 
+fscanf(fp,"%d",&nBlocos);//guardar num de blocos
+fgetc(fp);//le o @ 
 
-    if(buffer!=0)
-        fprintf(fp2,"%c",buffer);
-    else{
-        letra = getc(fp);
-        buffer = getc(fp);
-        
+do{
 
-        for(unsigned char i=0;i<buffer;i++){
-            fprintf(fp2,"%c",letra);
-        }
+    fscanf(fp,"%d",&tamanhos[i]);
+    fgetc(fp);
+    while(c!='@'){
+        c = fgetc(fp);
     }
-
-
-    buffer = getc(fp);
-}
+    c='R';
+    i++;
+} while(i<nBlocos);
 
 fclose(fp);
-fclose(fp2);
+
+ return nBlocos;
+}
+
+
+
+//le um bloco binario de tamanho N e devolve onde o mesmo está guardado
+char * leBloco(FILE *fp,int N){
+    printf("ler bloco\n");
+
+char * BUFFER;
+
+fread(&BUFFER,sizeof(char),N,fp);
+
+    printf("bloco lido\n");
+return BUFFER;
+}
+
+void descompBlocoRle(FILE *fp,char *bloco,int tamanho){
+char letra,nreps;
+
+    for(int i=0;i<tamanho;i++){
+
+        if(bloco[i]!=0)
+            fprintf(fp,"%c",bloco[i]);
+        else{
+            letra = bloco[i];
+            i++;
+            nreps = bloco[i];
+            for(int c=0;c<nreps;c++){
+                fprintf(fp,"%c",letra);
+            }
+
+        } 
+    }
+}
+void fRle(char * filenameRle,char * filenameFreq){
+    FILE * fp;
+    FILE * fp2;
+    char * originalFilename;
+    char * bloco;
+    int nBlocos;
+    int *tamanhos;
+ 
+    editaNome(filenameRle,originalFilename);
+  
+    fp = fopen(filenameRle,"rb");
+    if(fp)printf("abriu");else printf("erro");
+    
+    fp2 = fopen(originalFilename,"w");
+    if(fp2)printf("abriu");else printf("erro");
+
+    nBlocos = lerFreq(filenameFreq,tamanhos);
+
+    for(int i=0;i<nBlocos;i++){
+        bloco = leBloco(fp,tamanhos[i]);
+        descompBlocoRle(fp2,bloco,tamanhos[i]);
+    }
+
+   fclose(fp);
+   fclose(fp2);
+
 }
 
 //cortar o .cod do filename
 void editaNome(char * filename,char *nFilename){
+    
     int flag=0;
-
+    printf("%s",filename); 
     for(int i=0;flag<2;i++){
+        
         if(filename[i]=='.')flag++;
 
         if(flag<2){
             nFilename[i] = filename[i];
-        }
-            
+        }   
         else
            nFilename[i] = '\0';
 
         
-    }  
+    } 
+    
+    printf("saiu");
 
 
 }
+

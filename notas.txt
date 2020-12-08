@@ -15,7 +15,6 @@ O que ser necessário fazer????????
         (feito) 
 
 
-
         DESCODIFAÇÃO
 >>>>>>>>Descodificar por matrizes de bytes
         -cancro
