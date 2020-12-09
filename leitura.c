@@ -1,4 +1,3 @@
-
 #include "leitura.h"
 #include <string.h>
 
@@ -6,13 +5,13 @@
 BLOCOS * lerCodsSimbs(FILE *fp,BLOCOS * bL ,int id){
     char bit,flag='R';
     BLOCOS * b; 
-    SEQBINL* l;
+    SEQBINL* l = NULL;
     char seq[16];
     char * seqL;
     int simb,tam,i;
     
     
-    fscanf(fp,"%d",&tam); //lê tamanho do bloco
+    fscanf_s(fp,"%d",&tam); //lê tamanho do bloco
     fgetc(fp);//le o @ 
 
     for(simb=0;flag!='@';simb++){
@@ -74,109 +73,128 @@ return pBlocos;
 
 }
 
-int * lerFreq(char *filename,int * nBlocos){
+/*
+    Função lerFreq
 
-    char tipo,c;
+    Recebe
+    - Apontador para o ficheiro de frequências .freq
+    - Número de blocos no ficheiro.
+
+    Devolve
+    - Array com os tamanhos dos blocos em bytes
+*/
+int * lerFreq(char *filenameFREQ, int * nBlocos){
+    char tipo,c='R';
     int i=0;
-    FILE *fp;
-    fp = fopen(filename,"r");
+    FILE *fpFREQ;
 
-    fgetc(fp);//le o @ 
-    fscanf(fp,"%c",&tipo); //guardar o tipo do ficheiro rle|n
-    fgetc(fp);//le o @ 
-    fscanf(fp,"%d",nBlocos);//guardar num de blocos
-    fgetc(fp);//le o @ 
+    fpFREQ = fopen(filenameFREQ,"r");
+
+    fgetc(fpFREQ);                              //le o @ 
+    fscanf(fpFREQ,"%c",&tipo);                  //guardar o tipo do ficheiro rle|n
+    fgetc(fpFREQ);                              //le o @ 
+    fscanf(fpFREQ,"%d",nBlocos);                //guardar num de blocos
+    fgetc(fpFREQ);                              //le o @ 
    
     int *tamanhos = (int *) malloc(sizeof(int)*(*nBlocos));
     
     do{
-        fscanf(fp,"%d",&tamanhos[i]);
-        fgetc(fp);
+        fscanf_s(fpFREQ,"%d",&tamanhos[i]);
+        fgetc(fpFREQ);
         while(c!='@'){
-            c = fgetc(fp);
+            c = fgetc(fpFREQ);
          }
         c='R';
      i++;
     } while(i<*nBlocos);
 
-    fclose(fp);
-    printf("saiu\n");
-
+    fclose(fpFREQ);
     return tamanhos;
 }
 
 
 
-//le um bloco binario de tamanho N e devolve onde o mesmo está guardado
-char * leBloco(FILE *fp,int n){
-    printf("ler bloco\n");
+/*
+    Função leBloco
 
+    Recebe 
+    - Apontador para o ficheiro comprimido .rle
+    - tamanho do bloco a ler
+
+    Devolve
+    - String cujo conteúdo corresponde ao bloco
+*/
+char * leBloco(FILE *fpRLE,int n){
     char *BUFFER = (char *) malloc(sizeof(char)*n);
 
-    fread(BUFFER,sizeof(char),n,fp);
-    for(int i=0;i<n;i++)
-        printf("%c",BUFFER[i]);
+    fread(BUFFER,sizeof(char),n,fpRLE);         // Leitura do bloco
 
-    printf("bloco lido\n");
     return BUFFER;
 }
 
-void descompBlocoRle(FILE *fp,char *bloco,int tamanho){
-char letra,nreps;
+/*
+    Função descompBlocoRle
+
+    Recebe
+    - Apontador para o ficheiro TXT
+    - String com o conteúdo do bloco a descomprimir
+    - Tamanho do bloco em Bytes
+
+    Imprime no ficheiro TXT o conteúdo descomprimido do bloco.
+*/
+void descompBlocoRle(FILE *fpTXT,char *bloco,int tamanho){
+    char letra,nreps;
 
     for(int i=0;i<tamanho;i++){
-
-        if(bloco[i]!=0)
-            fprintf(fp,"%c",bloco[i]);
+        if(bloco[i]!=0)                         // Se não for o inicio de uma sequencia
+            fprintf(fpTXT,"%c",bloco[i]);       // Impressão da letra
         else{
-            letra = bloco[i];
-            i++;
-            nreps = bloco[i];
+            letra = bloco[++i];                 // Letra a ser repetida
+            nreps = bloco[++i];                 // Número de repetições
             for(int c=0;c<nreps;c++){
-                fprintf(fp,"%c",letra);
+                fprintf(fpTXT,"%c",letra);      // Impressão da sequência
             }
-
         } 
     }
 }
 void fRle(char * filenameRle,char * filenameFreq){
-    FILE * fp;
-    FILE * fp2;
-    char originalFilename[strlen(filenameRle)-3];
+    FILE * fpRLE;
+    FILE * fpTXT;
+    char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameRle) - 3);
     char * bloco;
     int nBlocos;
     int *tamanhos;
  
     editaNome(filenameRle,originalFilename);
-  
-    fp = fopen(filenameRle,"rb");
-    if(fp)printf("abriu\n");else printf("erro");
+ 
+    fpRLE = fopen(filenameRle,"rb");
     
-    fp2 = fopen(originalFilename,"w");
-    if(fp2)printf("abriu\n");else printf("erro");
-   
+    fpTXT = fopen(originalFilename,"w");
 
-    tamanhos = lerFreq(filenameFreq,&nBlocos);
+    tamanhos = lerFreq(filenameFreq,&nBlocos);          // Array com o número de blocos
   
     for(int i=0;i<nBlocos;i++){
-        printf("ciclo\n");
-        bloco = leBloco(fp,tamanhos[i]);
-        descompBlocoRle(fp2,bloco,tamanhos[i]);
-    }
-    
-   fclose(fp);
-   fclose(fp2);
-
+        bloco = leBloco(fpRLE,tamanhos[i]);             // Leitura do bloco
+        descompBlocoRle(fpTXT,bloco,tamanhos[i]);       // Descompressão do bloco e impressão para o TXT
+    } 
+   fclose(fpRLE);
+   fclose(fpTXT);
 }
 
-//cortar o .cod do filename
+/*
+    Função editaNome
+
+    Recebe
+    - String com de um ficheiro codificado .cod/.rle
+    - Apontador onde vai ser guardado o nome do ficheiro original (.txt)
+
+    Corta o .cod/.rle do nome do ficheiro
+*/
 void editaNome(char * filename,char *nFilename){
-    
     int flag=0;
     
     for(int i=0;flag<2;i++){
-        
-        
+       
         if(filename[i]=='.')flag++;
 
         if(flag<2){
@@ -184,13 +202,7 @@ void editaNome(char * filename,char *nFilename){
         }   
         else
            nFilename[i] = '\0';
-
-        
-    } 
-    
-   
-
-
+    }
 }
 
 
