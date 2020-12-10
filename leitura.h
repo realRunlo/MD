@@ -13,7 +13,7 @@ void editaNome(char * filename,char * nfile);
 //lê o necessário de um ficgeiro freq
 int *lerFreq(char *filename,int *nBlocos);
 //lê um bloco binário dado um tamanho N
-char * leBloco(FILE *fp,int N);
+void *leBloco(char *filename,int fileOffset,char *bloco,int tamanhoBloco);
 void descompBlocoRle(FILE *fp,char *bloco,int  tamanho);
 void fRle(char * filename,char * filenameFreq);
 

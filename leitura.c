@@ -1,5 +1,8 @@
 #include "leitura.h"
 #include <string.h>
+#include <pthread.h>
+
+
 
 //ler o tamanho do bloco id e a sequencia de bits dos valores e guardar numa lista de blocos
 BLOCOS * lerCodsSimbs(FILE *fp,BLOCOS * bL ,int id){
@@ -11,7 +14,7 @@ BLOCOS * lerCodsSimbs(FILE *fp,BLOCOS * bL ,int id){
     int simb,tam,i;
     
     
-    fscanf_s(fp,"%d",&tam); //lê tamanho do bloco
+    fscanf(fp,"%d",&tam); //lê tamanho do bloco
     fgetc(fp);//le o @ 
 
     for(simb=0;flag!='@';simb++){
@@ -99,7 +102,7 @@ int * lerFreq(char *filenameFREQ, int * nBlocos){
     int *tamanhos = (int *) malloc(sizeof(int)*(*nBlocos));
     
     do{
-        fscanf_s(fpFREQ,"%d",&tamanhos[i]);
+        fscanf(fpFREQ,"%d",&tamanhos[i]);
         fgetc(fpFREQ);
         while(c!='@'){
             c = fgetc(fpFREQ);
@@ -124,12 +127,16 @@ int * lerFreq(char *filenameFREQ, int * nBlocos){
     Devolve
     - String cujo conteúdo corresponde ao bloco
 */
-char * leBloco(FILE *fpRLE,int n){
-    char *BUFFER = (char *) malloc(sizeof(char)*n);
+void * leBloco(char *filename,int fileOffset,char *bloco,int tamanhoBloco){
+    FILE *fp ;
+    fp = fopen(filename,"rb");
+    fsekk(fp,fileOffset,SEEK_SET);                          //aponta para o bloco a ler
 
-    fread(BUFFER,sizeof(char),n,fpRLE);         // Leitura do bloco
+    bloco = (char *) malloc(sizeof(char)*tamanhoBloco);    //alocar espaço tamanho do bloco
 
-    return BUFFER;
+
+    fread(bloco,sizeof(char),tamanhoBloco,fp);            // Leitura do bloco
+
 }
 
 /*
@@ -151,6 +158,7 @@ void descompBlocoRle(FILE *fpTXT,char *bloco,int tamanho){
         else{
             letra = bloco[++i];                 // Letra a ser repetida
             nreps = bloco[++i];                 // Número de repetições
+  
             for(int c=0;c<nreps;c++){
                 fprintf(fpTXT,"%c",letra);      // Impressão da sequência
             }
@@ -164,6 +172,7 @@ void fRle(char * filenameRle,char * filenameFreq){
     char * bloco;
     int nBlocos;
     int *tamanhos;
+   
  
     editaNome(filenameRle,originalFilename);
  
@@ -172,6 +181,16 @@ void fRle(char * filenameRle,char * filenameFreq){
     fpTXT = fopen(originalFilename,"w");
 
     tamanhos = lerFreq(filenameFreq,&nBlocos);          // Array com o número de blocos
+
+    char **blocos = (char**) malloc(sizeof(char *)*nBlocos);
+    char **arg = (char) malloc(sizeof(char)*4);
+    pthread_t thread[nBlocos];
+
+    for(int i=0;i<nBlocos;i++){
+        pthread_create(&thread[i],NULL,leBloco,(void *) arg);
+    }
+    
+
   
     for(int i=0;i<nBlocos;i++){
         bloco = leBloco(fpRLE,tamanhos[i]);             // Leitura do bloco
