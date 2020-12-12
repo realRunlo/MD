@@ -124,15 +124,12 @@ int* lerFreq(char* filenameFREQ, int* nBlocos) {
     - String cujo conteúdo corresponde ao bloco
 */
 void leBloco(argLB* arg) {
-    printf("ler bloco\n");
     FILE* fp;
     fp = fopen(arg->filename, "rb");
     fseek(fp, arg->offset, 0);                                      //aponta para o bloco a ler
 
     fread(arg->bloco, sizeof(char), (arg->tamanho), fp);            // Leitura do bloco
-    printf("Lido!!!\n");
-    (*arg->flag) = 1;
-    printf("Notificado!\n");
+
 }
 
 /*
@@ -159,14 +156,13 @@ void descompBlocoRle(FILE* fpTXT, char* bloco, int tamanho) {
         }
     }
 }
-void fRle(char* filenameRle, char* filenameFreq) {
+void leRle(char* filenameRle, char* filenameFreq) {
     FILE* fpRLE;
     FILE* fpTXT;
     char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameRle) - 3);
     char* bloco;
     int nBlocos;
     int* tamanhos;
-    int threadFlag;
 
 
     editaNome(filenameRle, originalFilename);
@@ -184,10 +180,6 @@ void fRle(char* filenameRle, char* filenameFreq) {
 
     pthread_t* thread = (pthread_t*)malloc(sizeof(pthread_t) * nBlocos);
 
-    int* doneThread = (int*)malloc(sizeof(int) * nBlocos);
-    for (int i = 0; i < nBlocos; i++) {
-        doneThread[i] = 0;
-    }
 
     for (int i = 0; i < nBlocos; i++) {
         argLB* arg = (argLB*)malloc(sizeof(argLB));
@@ -195,28 +187,16 @@ void fRle(char* filenameRle, char* filenameFreq) {
         arg->offset = calculaOffset(tamanhos, i);
         arg->bloco = blocos[i];
         arg->tamanho = tamanhos[i];
-        arg->flag = &doneThread[i];
-        threadFlag = pthread_create(&thread[i], NULL, (void*)leBloco, (void*)arg);
-        if (threadFlag == 0) printf("criou thread %d\n", i);
-        else printf("Eroo a criar thread %d\n", i);
+        pthread_create(&thread[i], NULL, (void*)leBloco, (void*)arg);
+ 
         
     }
-    int n = 0;
-    while (n != nBlocos) {
-        n = 0;
-        for (int i = 0; i < nBlocos; i++) {
-            if (doneThread[i] == 1) n++;
-        }
-        printf("Estou ca dentro com flags: %d e %d \n", doneThread[0], doneThread[1]);
+
+    for(int c=0,rt;c!=nBlocos;){
+         rt = pthread_join(thread[c],NULL);
+        if(rt==0) c++;
     }
 
-    printf("Sai!\n");
-
-    for (int i = 0; i < tamanhos[0]; i++) {
-        printf("%c", blocos[0][i]);
-    }
-
-    //fclose(fpRLE);
     fclose(fpTXT);
 }
 
@@ -251,12 +231,3 @@ int calculaOffset(int* tamanhos, int i) {
     return offSet;
 }
 
-/*
-
-    for(int i=0;i<nBlocos;i++){
-        bloco = leBloco(fpRLE,tamanhos[i]);             // Leitura do bloco
-        descompBlocoRle(fpTXT,bloco,tamanhos[i]);       // Descompressão do bloco e impressão para o TXT
-    }
-
-*/
-//void *leBloco(char *filename,int fileOffset,char *bloco,int tamanhoBloco);
