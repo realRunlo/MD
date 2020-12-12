@@ -127,16 +127,18 @@ int * lerFreq(char *filenameFREQ, int * nBlocos){
     Devolve
     - String cujo conteúdo corresponde ao bloco
 */
-void * leBloco(char *filename,int fileOffset,char *bloco,int tamanhoBloco){
+void leBloco(argLB *arg){
+    printf("ler bloco\n");
     FILE *fp ;
-    fp = fopen(filename,"rb");
-    fsekk(fp,fileOffset,SEEK_SET);                          //aponta para o bloco a ler
+    fp = fopen(arg->filename,"rb");
+    fseek(fp,arg->Offset,SEEK_SET);                          //aponta para o bloco a ler
 
-    bloco = (char *) malloc(sizeof(char)*tamanhoBloco);    //alocar espaço tamanho do bloco
+    arg->bloco = (char *) malloc(sizeof(char)*(arg->tamanho));    //alocar espaço tamanho do bloco
 
 
-    fread(bloco,sizeof(char),tamanhoBloco,fp);            // Leitura do bloco
-
+    fread(arg->bloco,sizeof(char),(arg->tamanho),fp); // Leitura do bloco
+   
+    //printf("bloco offset: %d :: %s\n",arg->Offset,arg->bloco);
 }
 
 /*
@@ -172,31 +174,46 @@ void fRle(char * filenameRle,char * filenameFreq){
     char * bloco;
     int nBlocos;
     int *tamanhos;
+    int threadFlag;
    
  
     editaNome(filenameRle,originalFilename);
  
-    fpRLE = fopen(filenameRle,"rb");
+    //fpRLE = fopen(filenameRle,"rb");
     
     fpTXT = fopen(originalFilename,"w");
 
     tamanhos = lerFreq(filenameFreq,&nBlocos);          // Array com o número de blocos
 
     char **blocos = (char**) malloc(sizeof(char *)*nBlocos);
-    char **arg = (char) malloc(sizeof(char)*4);
+    
+
     pthread_t thread[nBlocos];
 
     for(int i=0;i<nBlocos;i++){
-        pthread_create(&thread[i],NULL,leBloco,(void *) arg);
+        argLB *argumentos = (argLB *) malloc(sizeof(argLB));
+        argumentos->filename = filenameRle;
+        argumentos->Offset = calculaOffset(tamanhos,i);
+        argumentos->bloco = blocos[i];
+        argumentos->tamanho = tamanhos[i];
+        threadFlag = pthread_create(&thread[i],NULL,(void *)leBloco,(void *)argumentos);
+        if(threadFlag==0) printf("criou thread %d\n",i);
+        else printf("Eroo a criar thread %d\n",i);
+       
     }
+      
+    for(int i=0;i<tamanhos[0];i++){
+        printf("%c t:0\n",blocos[0][i]);
+    }
+    printf("fechou thread 0\n");
+    pthread_exit(&thread[0]);
+    printf("fechou thread 1\n");
+    pthread_exit(&thread[1]);
     
+ 
 
-  
-    for(int i=0;i<nBlocos;i++){
-        bloco = leBloco(fpRLE,tamanhos[i]);             // Leitura do bloco
-        descompBlocoRle(fpTXT,bloco,tamanhos[i]);       // Descompressão do bloco e impressão para o TXT
-    } 
-   fclose(fpRLE);
+   
+   //fclose(fpRLE);
    fclose(fpTXT);
 }
 
@@ -225,3 +242,20 @@ void editaNome(char * filename,char *nFilename){
 }
 
 
+int calculaOffset(int *tamanhos,int i){
+    int offSet = 0;
+    for(int j=0;j<i;j++){
+        offSet += tamanhos[j];
+    }
+    return offSet;
+}
+
+/*
+  
+    for(int i=0;i<nBlocos;i++){
+        bloco = leBloco(fpRLE,tamanhos[i]);             // Leitura do bloco
+        descompBlocoRle(fpTXT,bloco,tamanhos[i]);       // Descompressão do bloco e impressão para o TXT
+    } 
+    
+*/
+//void *leBloco(char *filename,int fileOffset,char *bloco,int tamanhoBloco);
