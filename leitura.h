@@ -30,7 +30,7 @@ void editaNome(char* filename, char* nfile);
 int* lerFreq(char* filename, int* nBlocos);
 //lê um bloco binário dado um tamanho N
 void leBloco(argLB* arg);
-void descompBlocoRle(FILE* fp, char* bloco, int  tamanho);
+void descompBlocoRle(argDB* arg);
 void leRle(char* filename, char* filenameFreq);
 int calculaOffset(int* tamanhos, int i);
 
