@@ -13,7 +13,7 @@ typedef struct argLeBloco {
 
 }argLB;
 
-BLOCOS* lerCodsSimbs(FILE* fp, BLOCOS* bL, int id);
+BLOCOS*lerCodsSimbs(FILE* fp, BLOCOS* bL, int id);
 BLOCOS* lerCod(char* filename);
 void editaNome(char* filename, char* nfile);
 //lê o necessário de um ficgeiro freq

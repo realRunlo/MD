@@ -175,8 +175,6 @@ void leRle(char* filenameRle, char* filenameFreq) {
 
     editaNome(filenameRle, originalFilename);
 
-    //fpRLE = fopen(filenameRle,"rb");
-
     fpTXT = fopen(originalFilename, "w");
 
     tamanhos = lerFreq(filenameFreq, &nBlocos);          // Array com o número de blocos
@@ -235,7 +233,7 @@ void editaNome(char* filename, char* nFilename) {
     Recebe
     - apontador para array que contêm os tamanhos dos vários blocos
     - indice do bloco atual
-    Calcula 
+    Calcula a soma dos tamanhos até o bloco de indice i
 */
 int calculaOffset(int* tamanhos, int i) {
     int offSet = 0;
