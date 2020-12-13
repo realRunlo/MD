@@ -10,8 +10,18 @@ typedef struct argLeBloco {
     int offset;
     char* bloco;
     int tamanho;
+    int *tamDescomp;
 
 }argLB;
+
+typedef struct argDescompBloco {
+
+    char* filename;
+    int offset;
+    char* bloco;
+    int tamanho;
+
+}argDB;
 
 BLOCOS*lerCodsSimbs(FILE* fp, BLOCOS* bL, int id);
 BLOCOS* lerCod(char* filename);

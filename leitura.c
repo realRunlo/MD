@@ -129,6 +129,19 @@ void leBloco(argLB* arg) {
 
     fread(arg->bloco, sizeof(char), (arg->tamanho), fp);            // Leitura do bloco
 
+    char nreps;
+    int tamDescomp=0;
+        for (int i = 0; i < arg->tamanho; i++) {
+        if (arg->bloco[i] != 0)                         // Se não for o inicio de uma sequencia
+            tamDescomp++;
+        else {
+            i++;                                        // Letra a ser repetida
+            nreps = arg->bloco[++i];                    // Número de repetições
+            tamDescomp += nreps;
+        }
+    }
+    *(arg->tamDescomp) = tamDescomp;
+    
 }
 
 /*
@@ -139,18 +152,20 @@ void leBloco(argLB* arg) {
     - Tamanho do bloco em Bytes
     Imprime no ficheiro TXT o conteúdo descomprimido do bloco.
 */
-void descompBlocoRle(FILE* fpTXT, char* bloco, int tamanho) {
+//void descompBlocoRle(FILE* fpTXT, char* bloco, int tamanho) {
+void descompBlocoRle(argDB* arg){
+    FILE* fpTXT = fopen(arg->filename, "w");
+    fseek(fpTXT, arg->offset, 0);
     char letra, nreps;
-
-    for (int i = 0; i < tamanho; i++) {
-        if (bloco[i] != 0)                         // Se não for o inicio de uma sequencia
-            fprintf(fpTXT, "%c", bloco[i]);       // Impressão da letra
+    for (int i = 0; i < arg->tamanho; i++) {
+        if (arg->bloco[i] != 0)                         // Se não for o inicio de uma sequencia
+            fprintf(fpTXT, "%c", arg->bloco[i]);       // Impressão da letra
         else {
-            letra = bloco[++i];                 // Letra a ser repetida
-            nreps = bloco[++i];                 // Número de repetições
+            letra = arg->bloco[++i];                 // Letra a ser repetida
+            nreps = arg->bloco[++i];                 // Número de repetições
 
             for (int c = 0; c < nreps; c++) {
-                fprintf(fpTXT, "%c", letra);      // Impressão da sequência
+                fprintf(fpTXT, "%c", letra);        // Impressão da sequência
             }
         }
     }
@@ -185,6 +200,7 @@ void leRle(char* filenameRle, char* filenameFreq) {
     }
 
     pthread_t* thread = (pthread_t*)malloc(sizeof(pthread_t) * nBlocos);
+    int* tamDescomp = (int*)malloc(sizeof(int)*nBlocos);
 
 
     for (int i = 0; i < nBlocos; i++) {
@@ -193,16 +209,28 @@ void leRle(char* filenameRle, char* filenameFreq) {
         arg->offset = calculaOffset(tamanhos, i);
         arg->bloco = blocos[i];
         arg->tamanho = tamanhos[i];
+        arg->tamDescomp = &tamDescomp[i];
         pthread_create(&thread[i], NULL, (void*)leBloco, (void*)arg);
- 
-        
     }
 
-    for(int c=0,rt;c!=nBlocos;){
-         rt = pthread_join(thread[c],NULL);
-        if(rt==0) c++;
+    for(int i=0,rt;i<nBlocos;){
+         rt = pthread_join(thread[i],NULL);
+         if (rt == 0) {
+             argDB* arg = (argDB*)malloc(sizeof(argDB));
+             arg->filename = originalFilename;
+             arg->offset = calculaOffset(tamDescomp, i);
+             arg->bloco = blocos[i];
+             arg->tamanho = tamanhos[i];
+             pthread_create(&thread[i], NULL, (void*)descompBlocoRle, (void*)arg);
+             i++;
+         }
     }
 
+    for (int i = 0, rt; i < nBlocos;) {
+        rt = pthread_join(thread[i], NULL);
+        if (rt == 0)
+            i++;
+    }
     fclose(fpTXT);
 }
 
