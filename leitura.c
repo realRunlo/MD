@@ -118,10 +118,9 @@ int* lerFreq(char* filenameFREQ, int* nBlocos) {
 /*
     Função leBloco
     Recebe
-    - Apontador para o ficheiro comprimido .rle
-    - tamanho do bloco a ler
-    Devolve
-    - String cujo conteúdo corresponde ao bloco
+    - Apontador para estrtura de argumentos
+    Lê bloco de bytes 
+
 */
 void leBloco(argLB* arg) {
     FILE* fp;
@@ -156,6 +155,15 @@ void descompBlocoRle(FILE* fpTXT, char* bloco, int tamanho) {
         }
     }
 }
+
+/*
+    Função leRle
+    Recebe
+    - nome do ficheiro rle
+    - nome do ficheiro rle.freq
+    Imprime no ficheiro TXT o conteúdo descomprimido do bloco.
+*/
+
 void leRle(char* filenameRle, char* filenameFreq) {
     FILE* fpRLE;
     FILE* fpTXT;
@@ -222,7 +230,13 @@ void editaNome(char* filename, char* nFilename) {
     }
 }
 
-
+/*
+    Função calculaOffset
+    Recebe
+    - apontador para array que contêm os tamanhos dos vários blocos
+    - indice do bloco atual
+    Calcula 
+*/
 int calculaOffset(int* tamanhos, int i) {
     int offSet = 0;
     for (int j = 0; j < i; j++) {
