@@ -9,13 +9,10 @@ O que ser necessário fazer????????
         -têm que ser ler em binário o ficheiro
         -guardar a sequencias binarias dos blocos
 
-
         DESCODIFAÇÃO
 >>>>>>>>Descodificar por matrizes de bytes
         -cancro
         -n percebemos
         -haveremos de entender
-
-
->>>>>>>>>Otimização por execução paralela (Multi threads)
-        -Grande senão só se houver tempo e cabeça
+---
+por os 3 modos de execução funcionais
