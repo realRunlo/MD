@@ -14,5 +14,9 @@
 void processaRle(char* filename, char* filenameFreq);
 void mensagemFim(int tempo,int *tamanhos,int* tamDescomp,int nBlocos);
 
+void processaCod(char * filenameCod, char * filenameShaf);
+int* lerCodFile(char* filenameCod, int* nBlocos);
+void lerCodigos(char* filenameCod, int** codigos, int* tamanhos);
+
 
 #endif // ___escrita_h___
