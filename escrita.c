@@ -23,7 +23,6 @@
 
 void processaRle(char* filenameRle, char* filenameFreq) {
     FILE* fpRLE;
-    FILE* fpTXT;
     char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameRle) - 3);
     char* bloco;
     int nBlocos;
@@ -32,7 +31,6 @@ void processaRle(char* filenameRle, char* filenameFreq) {
 
     editaNome(filenameRle, originalFilename);
 
-    fpTXT = fopen(originalFilename, "w");
 
     tamanhos = lerFreq(filenameFreq, &nBlocos);          // Array com o número de blocos
 
@@ -76,125 +74,53 @@ void processaRle(char* filenameRle, char* filenameFreq) {
 
     // dar free a toda a memória alocada ???!?!?!?
 
-    fclose(fpTXT);
 }
 
 void processaCod(char* filenameCod, char* filenameShaf) {
     FILE* fpRLE;
     FILE* fpTXT;
     char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameCod) - 3);
-    char* bloco;
+    char ** blocos;
     int nBlocos;
-    int* tamanhos;
+    int* tamanhosCod;
+    int* tamanhosShaf;
+    
 
 
     editaNome(filenameCod, originalFilename);
 
     fpTXT = fopen(originalFilename, "w");
 
-    tamanhos = lerCodFile(filenameCod, &nBlocos);          // Array com o número de blocos
+    lerCodNblocos(filenameCod, &nBlocos);          // ler numero de blocos
 
     int** codigos = (int**)malloc(sizeof(int*) * nBlocos);
-    int matrix[2][256];
+
     for (int i = 0; i < nBlocos; i++) {
         codigos[i] = (int*)malloc(sizeof(int) * 256);      //alocar espaço para os 256 codigos
     }
+    for(int i=0;i<nBlocos;i++){
+        for(int j=0;j<256;j++){
+            codigos[i][j] = -1;
+        }
+    }
 
-    lerCodigos(filenameCod, codigos, tamanhos);
+    lerCodigos(filenameCod, codigos, tamanhosCod);
 
-    tamanhos = lerFreq(filenameShaf, &nBlocos);
+    blocos = lerShaf(filenameShaf,tamanhosShaf,blocos);  
+    /*argDS *arg;
+    arg->filename = originalFilename;
+    arg->offset = calculaOffset(tamDescomp, i);
+    arg->bloco = blocos[i];
+     arg->tamanho = tamanhos[i];
 
-    descodShaf(filenameShaf, codigos, tamanhos);
+    descodShaf();
 
     //leBlocoCod(filenameCod,11);
-
+*/
     fclose(fpTXT);
 }
 
-void descodShaf(char * filename, int **codigos, int *tamanhos) {
-    FILE* fpSHAF = fopen(filename, "rb");
-    FILE* fpTXT = fopen("aaa.txt", "w");
-    char letra, nreps;
-    char* bloco = (char*)malloc(sizeof(char) * tamanhos[0]);
 
-    fread(bloco, sizeof(char), tamanhos[0], fpSHAF);
-
-    char* binBloco = (char*)malloc(sizeof(char) * tamanhos[0] * 8);
-    
-    blocoToBin(bloco, binBloco, tamanhos); // mudar para struct que acede aos bits
-
-}
-
-
-// mudar para struct que acede aos bits
-void blocoToBin(char* bloco, char* binBloco, int * tamanhos) {
-    int n = 0;
-    for (int i = 0; i < tamanhos[0]; i++) {
-        char * c = fromASCIItoBin(bloco[i], binBloco); 
-        for (int j = 0; j < 8; j++) {
-            binBloco[n++] = c[j];
-        }
-    }
-}
-
-void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
-    char bit, flag = 'R';
-    char seq[16];
-    int codPosicao=0, codTamanho = 0, i, counter = 0;
-    FILE* fpCOD = fopen(filenameCod, "r");
-    for (int i = 0; i < 4;) {
-        if (fgetc(fpCOD) == '@') i++;
-    }
-
-    for (int i = 0; i < 256;) {
-        bit = getc(fpCOD);
-        printf("%c\n", bit);
-        if (bit == ';' || bit == '@'){
-            if (codTamanho != 0) {
-                printf("%d no spot %d\n", binToInt(seq, codTamanho), codPosicao);
-                codigos[0][binToInt(seq, codTamanho)] = codPosicao;
-                codTamanho = 0;
-            }
-            i++;
-            codPosicao++;
-        }
-        else {
-            seq[codTamanho++] = bit;
-        }
-    }
-}
-
-
-
-
-int* lerCodFile(char* filenameCod, int * nBlocos) {
-    char tipo, c = 'R';
-    int i = 0;
-    FILE* fpCod;
-
-    fpCod = fopen(filenameCod, "r");
-
-    fgetc(fpCod);                              //le o @ 
-    fscanf(fpCod, "%c", &tipo);                  //guardar o tipo do ficheiro rle|n
-    fgetc(fpCod);                              //le o @ 
-    fscanf(fpCod, "%d", nBlocos);                //guardar num de blocos
-    fgetc(fpCod);                              //le o @ 
-
-    int* tamanhos = (int*)malloc(sizeof(int) * (*nBlocos));
-
-    do {
-        fscanf(fpCod, "%d", &tamanhos[i]);
-        fgetc(fpCod);
-        while (c != '@') {
-            c = fgetc(fpCod);
-        }
-        c = 'R';
-        i++;
-    } while (i < *nBlocos);
-
-    fclose(fpCod);
-    return tamanhos;
-}
 
 /*
     Função mensagemFim

@@ -10,70 +10,6 @@
 
 
 
-
-//ler o tamanho do bloco id e a sequencia de bits dos valores e guardar numa lista de blocos
-void lerCodsSimbs(FILE* fp,char ** codigos,int *tamaho) {
-    char bit, flag = 'R';
-    char seq[16];
-    int simb,i;
-
-
-    fscanf(fp, "%d",tamaho); //lê tamanho do bloco
-    fgetc(fp);//le o @ 
-
-    for (simb = 0; flag != '@'; simb++) {
-        bit = fgetc(fp);
-        flag = bit;
-
-        //está a ler bit a bit não há forma melhor
-        if (bit != ';' && bit != '@') {
-            for (bit, i = 0; bit != ';'; i++) {
-                if (bit != ';')
-                    seq[i] = bit;
-                bit = fgetc(fp);
-            }
-            seq[i] = '\0';
-            codigos[simb] = seq;
-            printf("Simbolo %d : %s\n",simb,codigos[simb]);
-        }
-        
-
-
-    }
-
-}
-
-
-
-//lê ficheiro .cod
-void lerCod(char* filename) {
-    //0 rle false,1 rle true
-    int nBlocos,id;
-    char tipo;
-    int tamanho;
-  
-    FILE* fp;
-
-    //inicia estrutura de sequência de códigos
-    fp = fopen(filename, "r");
-
-    fgetc(fp);
-    fscanf(fp, "%c", &tipo); //guardar o tipo do ficheiro rle|n
-    printf("%c\n", tipo);
-    fgetc(fp);
-    fscanf(fp, "%d", &nBlocos);//guardar num de blocos
-    printf("%d\n", nBlocos);
-    fgetc(fp);//le o @ 
-    char **codigos = malloc(sizeof(char*)*nBlocos);
-
-    for (id = 1; id <= nBlocos; id++) // lêr blocos a bloco
-        lerCodsSimbs(fp,codigos[id],&tamanho);
-
-
-    printf("oi");
-    fclose(fp);
-}
-
 /*
     Função lerFreq
     Recebe
@@ -140,6 +76,79 @@ void leBloco(argLB* arg) {
     }
     *(arg->tamDescomp) = tamDescomp;
     
+}
+
+
+void lerCodNblocos(char* filenameCod, int * nBlocos) {
+    FILE* fpCod;
+
+    fpCod = fopen(filenameCod, "r");
+
+    fgetc(fpCod);                              //le o @ 
+    fgetc(fpCod);                 //guardar o tipo do ficheiro rle|n
+    fgetc(fpCod);                              //le o @ 
+    fscanf(fpCod, "%d", nBlocos);                //guardar num de blocos 
+}
+
+void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
+    char bit,c,tipo, flag = 'R';
+    char seq[16];
+    int nBlocos,codPosicao=0, codTamanho = 0, i=0, counter = 0;
+    FILE* fpCOD = fopen(filenameCod, "r");
+
+    fgetc(fpCOD);                              //le o @ 
+    fscanf(fpCOD, "%c", &tipo);                  //guardar o tipo do ficheiro rle|n
+    fgetc(fpCOD);                              //le o @ 
+    fscanf(fpCOD, "%d",&nBlocos);                //guardar num de blocos
+    fgetc(fpCOD);                              //le o @ 
+
+    do {
+        fscanf(fpCOD, "%d", &tamanhos[i]);
+        fgetc(fpCOD);                           //le o @ 
+        while (c != '@') {
+            c = fgetc(fpCOD);
+            if (c == ';' || c == '@'){
+                if (codTamanho != 0) {
+                     printf("%d no spot %d\n", binToInt(seq, codTamanho), codPosicao);
+                    codigos[i][binToInt(seq, codTamanho)] = codPosicao;
+                    codTamanho = 0;
+                }
+                codPosicao++;
+            }
+            else {
+                 seq[codTamanho++] = c;
+            }
+            
+        }
+        c = 'R';
+        i++;
+        codPosicao=0;
+    } while (i < nBlocos);
+   
+}
+void lerOffsetsShaf(char* filenameShaf,int **tam){
+
+}
+char **lerShaf(char* filenameShaf,int *tamanhosShaf,char **blocos) {
+    int nBlocos,i=0;
+    char c;
+    FILE * fp = fopen(filenameShaf,"r");
+    fgetc(fp);              //le @
+    fscanf(fp,"%d",&nBlocos);   //le numero de blocos
+    fgetc(fp);              //le @
+
+    char **blocos = (char**)malloc(sizeof(char)*(nBlocos));
+    do{
+        fscanf(fp,"%d",&tamanhosShaf[i]); 
+        fgetc(fp);              //le @ 
+        blocos[i] = (char*)malloc(sizeof(char)*(tamanhosShaf[i]));
+        fread(blocos[i],sizeof(char),tamanhosShaf[i],fp);
+        printf("%c",getc(fp));
+        
+        i++;
+    }while(i<nBlocos);
+    
+    return blocos;
 }
 
 
