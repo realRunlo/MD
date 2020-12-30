@@ -28,10 +28,10 @@ void processaRle(char* filenameRle, char* filenameFreq) {
     int nBlocos;
     int* tamanhos;
 
-    editaNome(filenameRle, originalFilename);
+    editaNome(filenameRle, originalFilename);  //retira .rle
 
 
-    tamanhos = lerFreq(filenameFreq, &nBlocos);          // Array com o número de blocos
+    tamanhos = lerFreq(filenameFreq, &nBlocos);          // Array com tamanhos dos blocos
 
     char** blocos = (char**)malloc(sizeof(char*) * nBlocos);
     for (int i = 0; i < nBlocos; i++) {
@@ -75,8 +75,7 @@ void processaRle(char* filenameRle, char* filenameFreq) {
 
 }
 
-void processaCod(char* filenameCod, char* filenameShaf) {
-    FILE* fpRLE;
+char * processaShaf(char* filenameCod, char* filenameShaf,char tipo) {
     FILE* fpTXT;
     char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameCod) - 3);
     char ** blocos;
@@ -84,7 +83,9 @@ void processaCod(char* filenameCod, char* filenameShaf) {
     int* tamanhosCod;
     int* tamanhosShaf;
 
-    editaNome(filenameCod, originalFilename);
+    cortaSufixo(filenameCod,originalFilename,tipo);
+    printf("%s\n",originalFilename);
+    printf("%s\n",filenameCod);
 
     fpTXT = fopen(originalFilename, "w");
 
@@ -131,6 +132,7 @@ void processaCod(char* filenameCod, char* filenameShaf) {
     */
 
     fclose(fpTXT);
+    return originalFilename;
 }
 
 

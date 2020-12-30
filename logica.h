@@ -55,7 +55,10 @@ int calculaOffset(int* tamanhos, int i);
 int binToInt(char* seq, int tamanho);
 void descompBlocoRle(argDB* arg);
 //void blocoToBin(char* bloco, char* binBloco, int * tamanhos);
-void descodShaf(char * filename, int **codigos, int *tamanhos);
+void descodShaf(argDS * arg);
+void cortaSufixo(char *filename,char * nFilename,char tipo);
+void exeNormal(char *filenameShaf);
+void cortaSufixo(char *filename,char * nFilename,char tipo);
 
 
 #endif // ___logica_h___

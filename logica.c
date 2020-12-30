@@ -4,6 +4,7 @@
 */
 #include "leitura.h"
 #include "escrita.h"
+#include <string.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +30,28 @@ void editaNome(char* filename, char* nFilename) {
             nFilename[i] = '\0';
     }
 }
+
+void cortaSufixo(char *filename,char * nFilename,char tipo){
+    int pontos,flag = 0;
+
+    if(tipo=='R') 
+        pontos=3;
+    else
+        pontos=2;
+    
+
+    for (int i = 0; flag < pontos; i++) {
+
+        if (filename[i] == '.')flag++;
+
+        if (flag < pontos) {
+            nFilename[i] = filename[i];
+        }
+        else
+            nFilename[i] = '\0';
+    }
+}
+
 
 /*
     Função calculaOffset
@@ -165,3 +188,26 @@ void blocoToBin(char* bloco, char* binBloco, int * tamanhos) {
         }
     }
 }*/
+
+void exeNormal(char *filenameShaf){
+    char *filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) );
+    char c,cod[4] = ".cod";
+    char* filenameNR;
+    FILE *fp = fopen(filenameShaf,"r");
+    fgetc(fp);
+    c = fgetc(fp);
+    fclose(fp);
+    cortaSufixo(filenameShaf,filenameCod,c); //cortar sufixo .shaf
+    printf("%s\n",filenameCod);
+    strcat(filenameCod,cod); //adiciona .cod
+    printf("%s\n",filenameCod);               // está a dar print aaa.txt.codð(@ , tem haver com a memoria
+    
+    filenameNR = processaShaf(filenameCod,filenameShaf,c);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
+    printf("shaf processado\n");
+    if (c=='R'){
+        processaRle(filenameNR,filenameCod);          
+    }
+
+}
+
+

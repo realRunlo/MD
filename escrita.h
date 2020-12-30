@@ -17,7 +17,7 @@
 
 void processaRle(char* filename, char* filenameFreq);
 void mensagemFim(int tempo,int *tamanhos,int* tamDescomp,int nBlocos);
-void processaCod(char * filenameCod, char * filenameShaf);
+char * processaShaf(char* filenameCod, char* filenameShaf,char tipo); 
 
 
 #endif // ___escrita_h___
