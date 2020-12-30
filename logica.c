@@ -72,10 +72,11 @@ void descompBlocoRle(argDB* arg){
         }
     }
 }
+
 void descodShaf(argDS * arg) {
     FILE* fpTXT = fopen(arg->filename, "w");
     fseek(fpTXT, arg->offset, 0);
-    int codigo = 0;
+    int codigo = 0, c = 0;
     for (int i = 0; i < arg->tamanho; i++){
         char simbolo;
         acederB  caracter; 
@@ -85,48 +86,56 @@ void descodShaf(argDS * arg) {
         if(simbolo!=-1){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit7;
         simbolo = arg->codigos[codigo];
         if(simbolo!=-1){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit6;
         simbolo = arg->codigos[codigo];
         if(simbolo!=-1){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit5;
         simbolo = arg->codigos[codigo];
         if(simbolo!=-1){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit4;
         simbolo = arg->codigos[codigo];
         if(simbolo!=-1){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit3;
         simbolo = arg->codigos[codigo];
         if(simbolo!=-1){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit2;
         simbolo = arg->codigos[codigo];
         if(simbolo!=-1){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit1;
         simbolo = arg->codigos[codigo];
         if(simbolo!=-1){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            if (++c == arg->tamanhoDescod) break;
         }    
         
     }

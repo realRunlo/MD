@@ -26,10 +26,10 @@ typedef struct argLeBloco {
 }argLB;
 
 typedef struct argDescodSahf{
-
     char *filename;
     char * bloco;
     int tamanho;
+    int tamanhoDescod;
     int offset;
     int * codigos;
 }argDS;

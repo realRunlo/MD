@@ -28,7 +28,6 @@ void processaRle(char* filenameRle, char* filenameFreq) {
     int nBlocos;
     int* tamanhos;
 
-
     editaNome(filenameRle, originalFilename);
 
 
@@ -84,8 +83,6 @@ void processaCod(char* filenameCod, char* filenameShaf) {
     int nBlocos;
     int* tamanhosCod;
     int* tamanhosShaf;
-    
-
 
     editaNome(filenameCod, originalFilename);
 
@@ -94,6 +91,8 @@ void processaCod(char* filenameCod, char* filenameShaf) {
     lerCodNblocos(filenameCod, &nBlocos);          // ler numero de blocos
 
     int** codigos = (int**)malloc(sizeof(int*) * nBlocos);
+    tamanhosCod = (int*)malloc(sizeof(int) * nBlocos);
+    tamanhosShaf = (int*)malloc(sizeof(int) * nBlocos);
 
     for (int i = 0; i < nBlocos; i++) {
         codigos[i] = (int*)malloc(sizeof(int) * 256);      //alocar espaço para os 256 codigos
@@ -106,17 +105,31 @@ void processaCod(char* filenameCod, char* filenameShaf) {
 
     lerCodigos(filenameCod, codigos, tamanhosCod);
 
-    blocos = lerShaf(filenameShaf,tamanhosShaf,blocos);  
-    /*argDS *arg;
-    arg->filename = originalFilename;
-    arg->offset = calculaOffset(tamDescomp, i);
-    arg->bloco = blocos[i];
-     arg->tamanho = tamanhos[i];
+    blocos = lerShaf(filenameShaf,tamanhosShaf);
 
-    descodShaf();
+    pthread_t* thread = (pthread_t*)malloc(sizeof(pthread_t) * nBlocos);
 
+    for (int i = 0; i < nBlocos; i++) {
+        argDS* arg = (argDS*)malloc(sizeof(argDS));
+        arg->filename = originalFilename;
+        arg->bloco = blocos[i];
+        arg->tamanho = tamanhosShaf[i];
+        arg->tamanhoDescod = tamanhosCod[i];
+        arg->offset = calculaOffset(tamanhosCod, i);
+        arg->codigos = codigos[i];
+        pthread_create(&thread[i], NULL, (void*)descodShaf, (void*)arg);
+    }
+    
+    for (int i = 0, rt; i < nBlocos;) {
+        rt = pthread_join(thread[i], NULL);
+        if (rt == 0)
+            i++;
+    }
+
+    /*
     //leBlocoCod(filenameCod,11);
-*/
+    */
+
     fclose(fpTXT);
 }
 

@@ -91,7 +91,7 @@ void lerCodNblocos(char* filenameCod, int * nBlocos) {
 }
 
 void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
-    char bit,c,tipo, flag = 'R';
+    char c = 'R', tipo;
     char seq[16];
     int nBlocos,codPosicao=0, codTamanho = 0, i=0, counter = 0;
     FILE* fpCOD = fopen(filenameCod, "r");
@@ -109,7 +109,6 @@ void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
             c = fgetc(fpCOD);
             if (c == ';' || c == '@'){
                 if (codTamanho != 0) {
-                     printf("%d no spot %d\n", binToInt(seq, codTamanho), codPosicao);
                     codigos[i][binToInt(seq, codTamanho)] = codPosicao;
                     codTamanho = 0;
                 }
@@ -129,7 +128,7 @@ void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
 void lerOffsetsShaf(char* filenameShaf,int **tam){
 
 }
-char **lerShaf(char* filenameShaf,int *tamanhosShaf,char **blocos) {
+char **lerShaf(char* filenameShaf,int *tamanhosShaf) {
     int nBlocos,i=0;
     char c;
     FILE * fp = fopen(filenameShaf,"r");
@@ -137,13 +136,14 @@ char **lerShaf(char* filenameShaf,int *tamanhosShaf,char **blocos) {
     fscanf(fp,"%d",&nBlocos);   //le numero de blocos
     fgetc(fp);              //le @
 
-    char **blocos = (char**)malloc(sizeof(char)*(nBlocos));
+    char **blocos = (char**)malloc(sizeof(char) * (nBlocos));
+
     do{
         fscanf(fp,"%d",&tamanhosShaf[i]); 
         fgetc(fp);              //le @ 
         blocos[i] = (char*)malloc(sizeof(char)*(tamanhosShaf[i]));
         fread(blocos[i],sizeof(char),tamanhosShaf[i],fp);
-        printf("%c",getc(fp));
+        getc(fp);
         
         i++;
     }while(i<nBlocos);

@@ -18,7 +18,7 @@ int* lerFreq(char* filename, int* nBlocos);
 void leBloco(argLB* arg);
 void lerCodNblocos(char* filenameCod, int * nBlocos);
 void lerCodigos(char* filenameCod, int** codigos, int* tamanhos);
-char **lerShaf(char* filenameShaf,int *tamanhosShaf,char **blocos);
+char **lerShaf(char* filenameShaf,int *tamanhosShaf);
 
 
 
