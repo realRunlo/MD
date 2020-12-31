@@ -31,25 +31,15 @@ void editaNome(char* filename, char* nFilename) {
     }
 }
 
-void cortaSufixo(char *filename,char * nFilename,char tipo){
-    int pontos,flag = 0;
+void cortaSufixo(char *filename,char * nFilename,int nCorte){
+    int N,i;
+    for(N=0;filename[N]!='\0';N++);
 
-    if(tipo=='R') 
-        pontos=3;
-    else
-        pontos=2;
-    
-
-    for (int i = 0; flag < pontos; i++) {
-
-        if (filename[i] == '.')flag++;
-
-        if (flag < pontos) {
-            nFilename[i] = filename[i];
-        }
-        else
-            nFilename[i] = '\0';
+    for(i=0;i<=N-nCorte;i++){
+        nFilename[i] = filename[i];
     }
+    nFilename[i] = '\0';
+    
 }
 
 
@@ -97,7 +87,9 @@ void descompBlocoRle(argDB* arg){
 }
 
 void descodShaf(argDS * arg) {
-    FILE* fpTXT = fopen(arg->filename, "w");
+ 
+    FILE* fpTXT = fopen(arg->filename,"w");  
+    
     fseek(fpTXT, arg->offset, 0);
     int codigo = 0, c = 0;
     for (int i = 0; i < arg->tamanho; i++){
@@ -189,24 +181,50 @@ void blocoToBin(char* bloco, char* binBloco, int * tamanhos) {
     }
 }*/
 
+//esta execução só aplica processaShaf e processaRle ou seja o ficheiro resultante é original
 void exeNormal(char *filenameShaf){
-    char *filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) );
-    char c,cod[4] = ".cod";
+    char *filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) - 1 );
+    char tipo,cod[5] = ".cod\0";
     char* filenameNR;
-    FILE *fp = fopen(filenameShaf,"r");
-    fgetc(fp);
-    c = fgetc(fp);
-    fclose(fp);
-    cortaSufixo(filenameShaf,filenameCod,c); //cortar sufixo .shaf
-    printf("%s\n",filenameCod);
-    strcat(filenameCod,cod); //adiciona .cod
-    printf("%s\n",filenameCod);               // está a dar print aaa.txt.codð(@ , tem haver com a memoria
+
+    cortaSufixo(filenameShaf,filenameCod,6);   //cortar sufixo .shaf\0
+
+    printf("Shaf cortado: %s\n",filenameCod);
     
-    filenameNR = processaShaf(filenameCod,filenameShaf,c);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
-    printf("shaf processado\n");
-    if (c=='R'){
-        processaRle(filenameNR,filenameCod);          
+    
+    strcat(filenameCod,cod);                    //adiciona .cod\0
+
+    printf("Ficheiro .cod :%s\n",filenameCod);               
+    
+    filenameNR = processaShaf(filenameCod,filenameShaf,&tipo);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
+
+    printf("Shaf processado,ficheiro gerado=> %s\n",filenameNR);  //o ficheiro resultante do processa shaf
+
+    if (tipo =='R'){
+        processaRle(filenameNR,filenameCod);   
+        printf("Descompressao rle aplicada\n");       
     }
+
+}
+
+//esta execução só aplica processaShaf ou seja o que é gerado ou é original ou um rle
+void exeS(char *filenameShaf){
+    char *filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) - 1 );
+    char tipo,cod[5] = ".cod\0";
+    char* filenameNR;
+
+    cortaSufixo(filenameShaf,filenameCod,6);   //cortar sufixo .shaf\0
+
+    printf("Shaf cortado: %s\n",filenameCod);
+    
+    
+    strcat(filenameCod,cod);                    //adiciona .cod\0
+
+    printf("Ficheiro .cod :%s\n",filenameCod);               
+    
+    filenameNR = processaShaf(filenameCod,filenameShaf,&tipo);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
+
+    printf("Shaf processado,ficheiro gerado=> %s\n",filenameNR);  //o ficheiro resultante do processa shaf
 
 }
 

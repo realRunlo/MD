@@ -75,21 +75,19 @@ void processaRle(char* filenameRle, char* filenameFreq) {
 
 }
 
-char * processaShaf(char* filenameCod, char* filenameShaf,char tipo) {
-    FILE* fpTXT;
-    char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameCod) - 3);
+char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
+    FILE* fpEscrita;
+    char* escritaFilename = (char*)malloc(sizeof(char) * strlen(filenameCod) - 3);
     char ** blocos;
     int nBlocos;
     int* tamanhosCod;
     int* tamanhosShaf;
 
-    cortaSufixo(filenameCod,originalFilename,tipo);
-    printf("%s\n",originalFilename);
-    printf("%s\n",filenameCod);
-
-    fpTXT = fopen(originalFilename, "w");
-
-    lerCodNblocos(filenameCod, &nBlocos);          // ler numero de blocos
+    cortaSufixo(filenameShaf,escritaFilename,6);   //cortar sufixo .shaf\0 ,obter nome onde vai escrever descodificado
+    
+    fpEscrita = fopen(escritaFilename, "w");
+ 
+    (*tipo) =  lerCodNblocos(filenameCod, &nBlocos);          // ler numero de blocos
 
     int** codigos = (int**)malloc(sizeof(int*) * nBlocos);
     tamanhosCod = (int*)malloc(sizeof(int) * nBlocos);
@@ -98,21 +96,23 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char tipo) {
     for (int i = 0; i < nBlocos; i++) {
         codigos[i] = (int*)malloc(sizeof(int) * 256);      //alocar espaço para os 256 codigos
     }
+
     for(int i=0;i<nBlocos;i++){
         for(int j=0;j<256;j++){
             codigos[i][j] = -1;
         }
     }
 
-    lerCodigos(filenameCod, codigos, tamanhosCod);
 
+    lerCodigos(filenameCod, codigos, tamanhosCod);
+   
     blocos = lerShaf(filenameShaf,tamanhosShaf);
 
     pthread_t* thread = (pthread_t*)malloc(sizeof(pthread_t) * nBlocos);
 
     for (int i = 0; i < nBlocos; i++) {
         argDS* arg = (argDS*)malloc(sizeof(argDS));
-        arg->filename = originalFilename;
+        arg->filename = escritaFilename;
         arg->bloco = blocos[i];
         arg->tamanho = tamanhosShaf[i];
         arg->tamanhoDescod = tamanhosCod[i];
@@ -120,7 +120,7 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char tipo) {
         arg->codigos = codigos[i];
         pthread_create(&thread[i], NULL, (void*)descodShaf, (void*)arg);
     }
-    
+
     for (int i = 0, rt; i < nBlocos;) {
         rt = pthread_join(thread[i], NULL);
         if (rt == 0)
@@ -131,8 +131,8 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char tipo) {
     //leBlocoCod(filenameCod,11);
     */
 
-    fclose(fpTXT);
-    return originalFilename;
+    fclose(fpEscrita);
+    return escritaFilename;
 }
 
 

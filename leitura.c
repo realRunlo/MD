@@ -79,15 +79,17 @@ void leBloco(argLB* arg) {
 }
 
 
-void lerCodNblocos(char* filenameCod, int * nBlocos) {
-    FILE* fpCod;
-
-    fpCod = fopen(filenameCod, "r");
+char lerCodNblocos(char* filenameCod, int * nBlocos) {
+    char c;
+    FILE* fpCod = fopen(filenameCod, "r");
+    
 
     fgetc(fpCod);                              //le o @ 
-    fgetc(fpCod);                 //guardar o tipo do ficheiro rle|n
+    fscanf(fpCod,"%c",&c);                 //guardar o tipo do ficheiro rle|n
     fgetc(fpCod);                              //le o @ 
-    fscanf(fpCod, "%d", nBlocos);                //guardar num de blocos 
+    fscanf(fpCod, "%d",nBlocos);                //guardar numero de blocos 
+
+    return c;
 }
 
 void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {

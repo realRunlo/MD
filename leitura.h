@@ -16,7 +16,7 @@
 int* lerFreq(char* filename, int* nBlocos);
 //lê um bloco binário dado um tamanho N
 void leBloco(argLB* arg);
-void lerCodNblocos(char* filenameCod, int * nBlocos);
+char lerCodNblocos(char* filenameCod, int * nBlocos);
 void lerCodigos(char* filenameCod, int** codigos, int* tamanhos);
 char **lerShaf(char* filenameShaf,int *tamanhosShaf);
 
