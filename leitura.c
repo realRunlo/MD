@@ -44,6 +44,7 @@ int* lerFreq(char* filenameFREQ, int* nBlocos) {
     } while (i < *nBlocos);
 
     fclose(fpFREQ);
+
     return tamanhos;
 }
 

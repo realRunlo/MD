@@ -59,6 +59,7 @@ void descodShaf(argDS * arg);
 void cortaSufixo(char *filename,char * nFilename,int nCorte);
 void exeNormal(char *filenameShaf);
 void exeS(char *filenameShaf);
+void exeR(char *filenameRle);
 
 
 

@@ -23,7 +23,7 @@
 
 void processaRle(char* filenameRle, char* filenameFreq) {
     FILE* fpRLE;
-    char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameRle) - 3);
+    char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameRle) - 4);
     char* bloco;
     int nBlocos;
     int* tamanhos;

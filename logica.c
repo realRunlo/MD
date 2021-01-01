@@ -228,4 +228,18 @@ void exeS(char *filenameShaf){
 
 }
 
+void exeR(char *filenameRle){
+    char *filenameFreq = (char*)malloc(sizeof(char) * strlen(filenameRle) + 4 );
+    char tipo,freq[6] = ".freq\0";
+    int i;
+  
+    for(i=0;filenameRle[i]!='\0';i++)
+            filenameFreq[i] = filenameRle[i];
+    filenameFreq[i] = '\0';
+
+    strcat(filenameFreq,freq);   //adiciona sufixo .freq
+
+    processaRle(filenameRle,filenameFreq);
+
+}
 

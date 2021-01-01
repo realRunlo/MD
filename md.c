@@ -12,6 +12,8 @@
 */
 int main(int argc, char **argv){
 exeNormal(argv[1]);
+//exeR(argv[1]);
+//exeS(argv[1])
 return 0;
 }
 
