@@ -7,14 +7,9 @@
 
 #ifndef ___leitura_h___
 #define ___leitura_h___
-/* 
-    estretura para passagem de argumentos para multi threading na leitura paralela
-*/
 
 
-//lê o necessário de um ficgeiro freq
-int* lerFreq(char* filename, int* nBlocos);
-//lê um bloco binário dado um tamanho N
+int* lerFC(char* filename, int* nBlocos);
 void leBloco(argLB* arg);
 char lerCodNblocos(char* filenameCod, int * nBlocos);
 void lerCodigos(char* filenameCod, int** codigos, int* tamanhos);

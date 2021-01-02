@@ -28,10 +28,10 @@ void processaRle(char* filenameRle, char* filenameFreq) {
     int nBlocos;
     int* tamanhos;
 
-    editaNome(filenameRle, originalFilename);  //retira .rle
+    cortaSufixo(filenameRle,originalFilename,5); //retira .rle
 
 
-    tamanhos = lerFreq(filenameFreq, &nBlocos);          // Array com tamanhos dos blocos
+    tamanhos = lerFC(filenameFreq, &nBlocos);          // Array com tamanhos dos blocos
 
     char** blocos = (char**)malloc(sizeof(char*) * nBlocos);
     for (int i = 0; i < nBlocos; i++) {
@@ -70,11 +70,19 @@ void processaRle(char* filenameRle, char* filenameFreq) {
         if (rt == 0)
             i++;
     }
-
-    // dar free a toda a memória alocada ???!?!?!?
-
 }
 
+/*
+    Função processaShaf
+    Recebe
+    - nome do ficheiro .cod
+    - nome do ficheiro shaf
+    - caracter (R|N), tipo do ficheiro
+    Devolve
+    - nome do ficheiro onde escreveu
+
+    Lê um cod e guarda os codigos, lê um shaf e descodifica os blocos em paralelo
+*/
 char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
     FILE* fpEscrita;
     char* escritaFilename = (char*)malloc(sizeof(char) * strlen(filenameCod) - 3);

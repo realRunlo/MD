@@ -10,27 +10,13 @@
 #include <stdlib.h>
 
 /*
-    Função editaNome
+    Função cortaSufixo
     Recebe
-    - String com de um ficheiro codificado .cod/.rle
-    - Apontador onde vai ser guardado o nome do ficheiro original (.txt)
-    Corta o .cod/.rle do nome do ficheiro
+    - um apontador para uma string origem
+    - um apontador para uma string destino
+    - número de caracteres a cortar da string origem do fim para o inicio
+    Corta a string origem e guarda a nova string na string destino
 */
-void editaNome(char* filename, char* nFilename) {
-    int flag = 0;
-
-    for (int i = 0; flag < 2; i++) {
-
-        if (filename[i] == '.')flag++;
-
-        if (flag < 2) {
-            nFilename[i] = filename[i];
-        }
-        else
-            nFilename[i] = '\0';
-    }
-}
-
 void cortaSufixo(char *filename,char * nFilename,int nCorte){
     int N,i;
     for(N=0;filename[N]!='\0';N++);
@@ -66,8 +52,6 @@ int calculaOffset(int* tamanhos, int i) {
     - Tamanho do bloco em Bytes
     Imprime no ficheiro TXT o conteúdo descomprimido do bloco.
 */
-
-//void descompBlocoRle(FILE* fpTXT, char* bloco, int tamanho) {
 void descompBlocoRle(argDB* arg){
     FILE* fpTXT = fopen(arg->filename, "w");
     fseek(fpTXT, arg->offset, 0);
@@ -154,8 +138,6 @@ void descodShaf(argDS * arg) {
         }    
         
     }
-    
-   // blocoToBin(bloco, binBloco, tamanhos); // mudar para struct que acede aos bits
 }
 
 

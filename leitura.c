@@ -11,39 +11,39 @@
 
 
 /*
-    Função lerFreq
+    Função lerFC
     Recebe
-    - Apontador para o ficheiro de frequências .freq
-    - Número de blocos no ficheiro.
-    Devolve
+    - nome de um ficheiro (.freq ou .cod)
+    - apontador para inteiro
+    Retorna
     - Array com os tamanhos dos blocos em bytes
 */
-int* lerFreq(char* filenameFREQ, int* nBlocos) {
+int* lerFC(char* filenameFC, int* nBlocos) {
     char tipo, c = 'R';
     int i = 0;
-    FILE* fpFREQ;
+    FILE* fpFC;
 
-    fpFREQ = fopen(filenameFREQ, "r");
+    fpFC = fopen(filenameFC, "r");
 
-    fgetc(fpFREQ);                              //le o @ 
-    fscanf(fpFREQ, "%c", &tipo);                  //guardar o tipo do ficheiro rle|n
-    fgetc(fpFREQ);                              //le o @ 
-    fscanf(fpFREQ, "%d", nBlocos);                //guardar num de blocos
-    fgetc(fpFREQ);                              //le o @ 
+    fgetc(fpFC);                              //le o @ 
+    fscanf(fpFC, "%c", &tipo);                  //guardar o tipo do ficheiro rle|n
+    fgetc(fpFC);                              //le o @ 
+    fscanf(fpFC, "%d", nBlocos);                //guardar num de blocos
+    fgetc(fpFC);                              //le o @ 
 
     int* tamanhos = (int*)malloc(sizeof(int) * (*nBlocos));
 
     do {
-        fscanf(fpFREQ, "%d", &tamanhos[i]);
-        fgetc(fpFREQ);
+        fscanf(fpFC, "%d", &tamanhos[i]);
+        fgetc(fpFC);
         while (c != '@') {
-            c = fgetc(fpFREQ);
+            c = fgetc(fpFC);
         }
         c = 'R';
         i++;
     } while (i < *nBlocos);
 
-    fclose(fpFREQ);
+    fclose(fpFC);
 
     return tamanhos;
 }
@@ -53,7 +53,7 @@ int* lerFreq(char* filenameFREQ, int* nBlocos) {
 /*
     Função leBloco
     Recebe
-    - Apontador para estrtura de argumentos
+    - Apontador para estrutura de argumentos
     Lê bloco de bytes 
 
 */
@@ -79,7 +79,15 @@ void leBloco(argLB* arg) {
     
 }
 
+/*
+    Função lerCodNblocos
+    Recebe
+    - nome do ficheiro .cod
+    - apontador para inteiro,para guardar numero de blocos
+    Retorna
+    - caracter que é o tipo do ficheiro (R|N)
 
+*/
 char lerCodNblocos(char* filenameCod, int * nBlocos) {
     char c;
     FILE* fpCod = fopen(filenameCod, "r");
@@ -128,9 +136,15 @@ void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
     } while (i < nBlocos);
    
 }
-void lerOffsetsShaf(char* filenameShaf,int **tam){
 
-}
+/*
+    Função lerCodNblocos
+    Recebe
+    - nome do ficheiro shaf
+    - array com os tamanhos dos blocos
+    Retorna
+    - os blocos de sequencias binárias codificadas shaf
+*/
 char **lerShaf(char* filenameShaf,int *tamanhosShaf) {
     int nBlocos,i=0;
     char c;
