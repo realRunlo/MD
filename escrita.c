@@ -30,6 +30,7 @@ void processaRle(char* filenameRle, char* filenameFreq) {
     int* tamanhos;
 
     cortaSufixo(filenameRle,originalFilename,5); //retira .rle
+    printf("%s",originalFilename);
 
 
     tamanhos = lerFC(filenameFreq, &nBlocos);          // Array com tamanhos dos blocos
@@ -85,7 +86,6 @@ void processaRle(char* filenameRle, char* filenameFreq) {
     Lê um cod e guarda os codigos, lê um shaf e descodifica os blocos em paralelo
 */
 char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
-    FILE* fpEscrita;
     char* escritaFilename = (char*)malloc(sizeof(char) * strlen(filenameCod) - 3);
     char ** blocos;
     int nBlocos;
@@ -95,11 +95,13 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
 
     cortaSufixo(filenameShaf,escritaFilename,6);   //cortar sufixo .shaf\0 ,obter nome onde vai escrever descodificado
     
-    fpEscrita = fopen(escritaFilename, "w");
+    
  
     maxBits =  lerCodNblocos(filenameCod,&nBlocos,tipo);          // ler numero de blocos
+   
+    printf("Numero blocos:%d\n",nBlocos);
     
-
+    
     int** codigos = (int**)malloc(sizeof(int*) * nBlocos);
     tamanhosCod = (int*)malloc(sizeof(int) * nBlocos);
     tamanhosShaf = (int*)malloc(sizeof(int) * nBlocos);
@@ -114,18 +116,24 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
              codigos[i] = (int*)malloc(sizeof(int) * 256); 
         }
     }
-    
+    printf("memaloc\n");
     for(int i=0;i<nBlocos;i++){
-        for(int j=0;j<256;j++){
+        if(maxBits[i] > 8){ 
+        for(int j=0;j<pow(2,maxBits[i]);j++){
             codigos[i][j] = -1;
+        }
+        }else{
+            for(int j=0;j<256;j++){
+            codigos[i][j] = -1;
+        }
         }
     }
 
 
     lerCodigos(filenameCod, codigos, tamanhosCod);
-   
+    printf("li codigos\n");
     blocos = lerShaf(filenameShaf,tamanhosShaf);
-
+    printf("leu blocos\n");
     pthread_t* thread = (pthread_t*)malloc(sizeof(pthread_t) * nBlocos);
 
     for (int i = 0; i < nBlocos; i++) {
@@ -136,6 +144,7 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
         arg->tamanhoDescod = tamanhosCod[i];
         arg->offset = calculaOffset(tamanhosCod, i);
         arg->codigos = codigos[i];
+        arg->tipo = (*tipo);
         pthread_create(&thread[i], NULL, (void*)descodShaf, (void*)arg);
     }
 
@@ -145,11 +154,7 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
             i++;
     }
 
-    /*
-    //leBlocoCod(filenameCod,11);
-    */
 
-    fclose(fpEscrita);
     return escritaFilename;
 }
 

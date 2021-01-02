@@ -72,7 +72,14 @@ void descompBlocoRle(argDB* arg){
 
 void descodShaf(argDS * arg) {
  
-    FILE* fpTXT = fopen(arg->filename,"w");  
+     FILE * fpTXT;
+    if((arg->tipo)=='N'){
+        fpTXT = fopen(arg->filename, "w");
+    }else
+    {
+        printf("Escrita binária\n");
+        fpTXT = fopen(arg->filename, "wb");
+    }
     
     fseek(fpTXT, arg->offset, 0);
     int codigo = 0, c = 0;
@@ -198,6 +205,7 @@ void exeS(char *filenameShaf){
     cortaSufixo(filenameShaf,filenameCod,6);   //cortar sufixo .shaf\0
 
     printf("Shaf cortado: %s\n",filenameCod);
+
     
     
     strcat(filenameCod,cod);                    //adiciona .cod\0

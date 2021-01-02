@@ -33,6 +33,7 @@ typedef struct argDescodSahf{
     int tamanhoDescod;
     int offset;
     int * codigos;
+    char tipo;
 }argDS;
 
 typedef union
