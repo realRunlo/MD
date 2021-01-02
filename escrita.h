@@ -20,4 +20,5 @@ void mensagemFim(int tempo,int *tamanhos,int* tamDescomp,int nBlocos);
 char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo);
 
 
+
 #endif // ___escrita_h___

@@ -225,3 +225,31 @@ void exeR(char *filenameRle){
 
 }
 
+
+int get_maxBits (int *symbols, FILE *fp_cod ){
+    int maxBits = 0, id_bits = 0, symbol = 0, block_not_over = 1; //true
+    char c, c_ant = '@';
+    while (block_not_over) { // Enquanto o bloco não acabar.
+        c = fgetc(fp_cod);
+        if (c == ';' || c == '@') {
+            if (c_ant == '0' || c_ant == '1'){
+                // Leu um código para aquele símbolo.
+                symbols[symbol] = 1; //true.
+                if(maxBits < id_bits) maxBits = id_bits; // Encontrou um código com o maior número de bits até agora.
+                }
+                // Não leu um código para aquele símbolo.
+                else symbols[symbol] = 0; //false.
+                if (c == '@') block_not_over = 0; //false.
+                // O Bloco terminou
+                else {
+                    // O Bloco não terminou, logo adiciona 1 ao índice de simbolos e reseta o índice de bits.
+                    symbol++;
+                    id_bits = 0;
+                }
+            }
+        if (c == '0' || c == '1') id_bits++; //Adiciona 1 ao índice de bits.
+        c_ant = c;
+    }
+    return maxBits; // Retorna o maior número de bits encontrado. 
+}
+

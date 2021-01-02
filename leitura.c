@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <math.h>
 
 
 
@@ -88,17 +89,26 @@ void leBloco(argLB* arg) {
     - caracter que é o tipo do ficheiro (R|N)
 
 */
-char lerCodNblocos(char* filenameCod, int * nBlocos) {
-    char c;
+int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c) {
     FILE* fpCod = fopen(filenameCod, "r");
-    
+    int simbolos[256],temp;
 
     fgetc(fpCod);                              //le o @ 
-    fscanf(fpCod,"%c",&c);                 //guardar o tipo do ficheiro rle|n
+    fscanf(fpCod,"%c",c);                 //guardar o tipo do ficheiro rle|n
     fgetc(fpCod);                              //le o @ 
     fscanf(fpCod, "%d",nBlocos);                //guardar numero de blocos 
+    fgetc(fpCod);                               //@
 
-    return c;
+    int * max = malloc(sizeof(int)*(*nBlocos));    
+
+    for(int i=0;i<(*nBlocos);i++){
+        fscanf(fpCod,"%d",&temp);                       //tamanho
+        fgetc(fpCod);                            
+        max[i] = get_maxBits(simbolos,fpCod);
+        printf("%d\n",max[i]);
+    }
+    fclose(fpCod);
+    return max;
 }
 
 void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {

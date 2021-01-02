@@ -11,7 +11,7 @@
 
 int* lerFC(char* filename, int* nBlocos);
 void leBloco(argLB* arg);
-char lerCodNblocos(char* filenameCod, int * nBlocos);
+int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c);
 void lerCodigos(char* filenameCod, int** codigos, int* tamanhos);
 char **lerShaf(char* filenameShaf,int *tamanhosShaf);
 

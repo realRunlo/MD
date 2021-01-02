@@ -5,7 +5,8 @@
 
 #ifndef ___logica_h___
 #define ___logica_h___
-
+#include <stdio.h>
+#include <stdlib.h>
 typedef struct argDescompBloco {
 
     char* filename;
@@ -58,6 +59,7 @@ void descodShaf(argDS * arg);
 void exeNormal(char *filenameShaf);
 void exeS(char *filenameShaf);
 void exeR(char *filenameRle);
+int get_maxBits (int *symbols, FILE *fp_cod );
 
 
 

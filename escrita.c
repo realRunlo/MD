@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <math.h>
 
 
 
@@ -90,21 +91,30 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
     int nBlocos;
     int* tamanhosCod;
     int* tamanhosShaf;
+    int * maxBits;
 
     cortaSufixo(filenameShaf,escritaFilename,6);   //cortar sufixo .shaf\0 ,obter nome onde vai escrever descodificado
     
     fpEscrita = fopen(escritaFilename, "w");
  
-    (*tipo) =  lerCodNblocos(filenameCod, &nBlocos);          // ler numero de blocos
+    maxBits =  lerCodNblocos(filenameCod,&nBlocos,tipo);          // ler numero de blocos
+    
 
     int** codigos = (int**)malloc(sizeof(int*) * nBlocos);
     tamanhosCod = (int*)malloc(sizeof(int) * nBlocos);
     tamanhosShaf = (int*)malloc(sizeof(int) * nBlocos);
+    FILE *fpCod = fopen(filenameCod,"r");
+    fgetc(fpCod);
 
-    for (int i = 0; i < nBlocos; i++) {
-        codigos[i] = (int*)malloc(sizeof(int) * 256);      //alocar espaço para os 256 codigos
+    for(int i=0;i<nBlocos;i++){
+
+        if(maxBits[i] > 8){  
+         codigos[i] = (int*)malloc(sizeof(int) * pow(2,maxBits[i]));      //alocar espaço para os 256 codigos
+        }else{
+             codigos[i] = (int*)malloc(sizeof(int) * 256); 
+        }
     }
-
+    
     for(int i=0;i<nBlocos;i++){
         for(int j=0;j<256;j++){
             codigos[i][j] = -1;
