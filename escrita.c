@@ -67,6 +67,11 @@ void processaRle(char* filenameRle, char* filenameFreq) {
         if (rt == 0)
             i++;
     }
+
+    free(tamanhos);
+    free(tamDescomp);
+    free(thread);
+    free(blocos);
 }
 
 /*
@@ -94,9 +99,6 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
     codigos = (cArray**)malloc(sizeof(cArray*) * nBlocos);
     tamanhosCod = (int*)malloc(sizeof(int) * nBlocos);
     tamanhosShaf = (int*)malloc(sizeof(int) * nBlocos);
-
-    FILE *fpCod = fopen(filenameCod,"rb");
-    fgetc(fpCod);
 
     for(int i=0;i<nBlocos;i++){
         if(maxBits[i] > 8){
@@ -144,6 +146,11 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
             i++;
     }
 
+    free(codigos);
+    free(tamanhosCod);
+    free(tamanhosShaf);
+    free(maxBits);
+    free(thread);
 
     return escritaFilename;
 }

@@ -67,7 +67,7 @@ void leBloco(argLB* arg) {
 
     char nreps;
     int tamDescomp=0;
-        for (int i = 0; i < arg->tamanho; i++) {
+    for (int i = 0; i < arg->tamanho; i++) {
         if (arg->bloco[i] != 0)                         // Se não for o inicio de uma sequencia
             tamDescomp++;
         else {
@@ -76,8 +76,8 @@ void leBloco(argLB* arg) {
             tamDescomp += nreps;
         }
     }
-    *(arg->tamDescomp) = tamDescomp;
-    
+    (*arg->tamDescomp) = tamDescomp;
+    fclose(fp);
 }
 
 /*
@@ -93,9 +93,9 @@ int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c) {
     FILE* fpCod = fopen(filenameCod, "r");
     int simbolos[256],temp;
 
-    fgetc(fpCod);                              //le o @ 
-    fscanf(fpCod,"%c",c);                 //guardar o tipo do ficheiro rle|n
-    fgetc(fpCod);                              //le o @ 
+    fgetc(fpCod);                               //le o @ 
+    fscanf(fpCod,"%c",c);                       //guardar o tipo do ficheiro rle|n
+    fgetc(fpCod);                               //le o @ 
     fscanf(fpCod, "%d",nBlocos);                //guardar numero de blocos 
     fgetc(fpCod);                               //@
 
@@ -145,7 +145,7 @@ void lerCodigos(char* filenameCod, cArray** codigos, int* tamanhos) {
         i++;
         codPosicao=0;
     } while (i < nBlocos);
-   
+    fclose(fpCOD);
 }
 
 /*
@@ -179,7 +179,7 @@ char **lerShaf(char* filenameShaf,int *tamanhosShaf) {
         fgetc(fp);                          //le @ 
         i++;
     }while(i<nBlocos);
-    
+    fclose(fp);
     return blocos;
 }
 

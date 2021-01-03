@@ -52,9 +52,11 @@ int calculaOffset(int* tamanhos, int i) {
     Imprime no ficheiro TXT o conteúdo descomprimido do bloco.
 */
 void descompBlocoRle(argDB* arg){
+    
     FILE* fpTXT = fopen(arg->filename, "w");
     fseek(fpTXT, arg->offset, 0);
     char letra, nreps;
+
     for (int i = 0; i < arg->tamanho; i++) {
         if (arg->bloco[i] != 0) {                      // Se não for o inicio de uma sequencia
             fprintf(fpTXT, "%c", arg->bloco[i]);       // Impressão da letra
@@ -67,10 +69,12 @@ void descompBlocoRle(argDB* arg){
             }
         }
     }
+    fclose(fpTXT);
+    free(arg->bloco);
+    free(arg);
 }
 
 void descodShaf(argDS * arg) {
- 
      FILE * fpTXT;
     if((arg->tipo)=='N'){
         fpTXT = fopen(arg->filename, "w");
@@ -166,9 +170,13 @@ void descodShaf(argDS * arg) {
             codigo = 0;
             bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
-        }    
-        
+        }        
     }
+    fclose(fpTXT);
+
+    free(arg->bloco);
+    free(arg->codigos);
+    free(arg);
 }
 
 
@@ -195,9 +203,8 @@ void exeNormal(char *filenameShaf){
     filenameNR = processaShaf(filenameCod,filenameShaf,&tipo);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
 
     if (tipo =='R'){
-        processaRle(filenameNR,filenameCod);          
+        processaRle(filenameNR, filenameCod);          
     }
-
 }
 
 //esta execução só aplica processaShaf ou seja o que é gerado ou é original ou um rle
