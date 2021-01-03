@@ -25,7 +25,6 @@ void cortaSufixo(char *filename,char * nFilename,int nCorte){
         nFilename[i] = filename[i];
     }
     nFilename[i] = '\0';
-    
 }
 
 
@@ -57,12 +56,12 @@ void descompBlocoRle(argDB* arg){
     fseek(fpTXT, arg->offset, 0);
     char letra, nreps;
     for (int i = 0; i < arg->tamanho; i++) {
-        if (arg->bloco[i] != 0)                         // Se não for o inicio de uma sequencia
+        if (arg->bloco[i] != 0) {                      // Se não for o inicio de uma sequencia
             fprintf(fpTXT, "%c", arg->bloco[i]);       // Impressão da letra
+        }
         else {
             letra = arg->bloco[++i];                 // Letra a ser repetida
             nreps = arg->bloco[++i];                 // Número de repetições
-
             for (int c = 0; c < nreps; c++) {
                 fprintf(fpTXT, "%c", letra);        // Impressão da sequência
             }
@@ -77,70 +76,95 @@ void descodShaf(argDS * arg) {
         fpTXT = fopen(arg->filename, "w");
     }else
     {
-        printf("Escrita binária\n");
         fpTXT = fopen(arg->filename, "wb");
     }
     
     fseek(fpTXT, arg->offset, 0);
-    int codigo = 0, c = 0;
+    int codigo = 0, c = 0, bitcounter = 0;
     for (int i = 0; i < arg->tamanho; i++){
-        char simbolo;
+        char simbolo = -1;
         acederB  caracter; 
+        cArray elemento;
         caracter.byte = arg->bloco[i];
+
         codigo = 2 * codigo + caracter.u.bit8;
-        simbolo = arg->codigos[codigo];
-        if(simbolo!=-1){
+        bitcounter++;
+        elemento = arg->codigos[codigo];
+        simbolo = elemento.simbolo;
+        if(simbolo!=-1 && elemento.tamanho == bitcounter){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit7;
-        simbolo = arg->codigos[codigo];
-        if(simbolo!=-1){
+        bitcounter++;
+        elemento = arg->codigos[codigo];
+        simbolo = elemento.simbolo;
+        if(simbolo!=-1 && elemento.tamanho == bitcounter){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit6;
-        simbolo = arg->codigos[codigo];
-        if(simbolo!=-1){
+        bitcounter++;
+        elemento = arg->codigos[codigo];
+        simbolo = elemento.simbolo;
+        if(simbolo!=-1 && elemento.tamanho == bitcounter){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit5;
-        simbolo = arg->codigos[codigo];
-        if(simbolo!=-1){
+        bitcounter++;
+        elemento = arg->codigos[codigo];
+        simbolo = elemento.simbolo;
+        if(simbolo!=-1 && elemento.tamanho == bitcounter){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit4;
-        simbolo = arg->codigos[codigo];
-        if(simbolo!=-1){
+        bitcounter++;
+        elemento = arg->codigos[codigo];
+        simbolo = elemento.simbolo;
+        if(simbolo!=-1 && elemento.tamanho == bitcounter){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit3;
-        simbolo = arg->codigos[codigo];
-        if(simbolo!=-1){
+        bitcounter++;
+        elemento = arg->codigos[codigo];
+        simbolo = elemento.simbolo;
+        if(simbolo!=-1 && elemento.tamanho == bitcounter){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit2;
-        simbolo = arg->codigos[codigo];
-        if(simbolo!=-1){
+        bitcounter++;
+        elemento = arg->codigos[codigo];
+        simbolo = elemento.simbolo;
+        if(simbolo!=-1 && elemento.tamanho == bitcounter){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
         }
         codigo = 2 * codigo + caracter.u.bit1;
-        simbolo = arg->codigos[codigo];
-        if(simbolo!=-1){
+        bitcounter++;
+        elemento = arg->codigos[codigo];
+        simbolo = elemento.simbolo;
+        if(simbolo!=-1 && elemento.tamanho == bitcounter){
             fprintf(fpTXT,"%c",simbolo);
             codigo = 0;
+            bitcounter = 0;
             if (++c == arg->tamanhoDescod) break;
         }    
         
@@ -158,18 +182,6 @@ int binToInt(char* seq, int tamanho) {
     return decimal;
 }
 
-// mudar para struct que acede aos bits
-/*
-void blocoToBin(char* bloco, char* binBloco, int * tamanhos) {
-    int n = 0;
-    for (int i = 0; i < tamanhos[0]; i++) {
-        char * c = fromASCIItoBin(bloco[i], binBloco); 
-        for (int j = 0; j < 8; j++) {
-            binBloco[n++] = c[j];
-        }
-    }
-}*/
-
 //esta execução só aplica processaShaf e processaRle ou seja o ficheiro resultante é original
 void exeNormal(char *filenameShaf){
     char *filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) - 1 );
@@ -177,21 +189,13 @@ void exeNormal(char *filenameShaf){
     char* filenameNR;
 
     cortaSufixo(filenameShaf,filenameCod,6);   //cortar sufixo .shaf\0
-
-    printf("Shaf cortado: %s\n",filenameCod);
-    
-    
-    strcat(filenameCod,cod);                    //adiciona .cod\0
-
-    printf("Ficheiro .cod :%s\n",filenameCod);               
+       
+    strcat(filenameCod,cod);                    //adiciona .cod\0            
     
     filenameNR = processaShaf(filenameCod,filenameShaf,&tipo);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
 
-    printf("Shaf processado,ficheiro gerado=> %s\n",filenameNR);  //o ficheiro resultante do processa shaf
-
     if (tipo =='R'){
-        processaRle(filenameNR,filenameCod);   
-        printf("Descompressao rle aplicada\n");       
+        processaRle(filenameNR,filenameCod);          
     }
 
 }
@@ -203,28 +207,20 @@ void exeS(char *filenameShaf){
     char* filenameNR;
 
     cortaSufixo(filenameShaf,filenameCod,6);   //cortar sufixo .shaf\0
-
-    printf("Shaf cortado: %s\n",filenameCod);
-
-    
-    
-    strcat(filenameCod,cod);                    //adiciona .cod\0
-
-    printf("Ficheiro .cod :%s\n",filenameCod);               
+  
+    strcat(filenameCod,cod);                    //adiciona .cod\0             
     
     filenameNR = processaShaf(filenameCod,filenameShaf,&tipo);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
-
-    printf("Shaf processado,ficheiro gerado=> %s\n",filenameNR);  //o ficheiro resultante do processa shaf
-
 }
 
-void exeR(char *filenameRle){
-    char *filenameFreq = (char*)malloc(sizeof(char) * strlen(filenameRle) + 4 );
-    char tipo,freq[6] = ".freq\0";
+void exeR(char* filenameRle) {
+    char* filenameFreq = (char*)malloc(sizeof(char) * strlen(filenameRle) + 4);
+    char tipo, freq[6] = ".freq\0";
     int i;
-  
-    for(i=0;filenameRle[i]!='\0';i++)
-            filenameFreq[i] = filenameRle[i];
+
+    for (i = 0; filenameRle[i] != '\0'; i++){
+        filenameFreq[i] = filenameRle[i];
+    }
     filenameFreq[i] = '\0';
 
     strcat(filenameFreq,freq);   //adiciona sufixo .freq

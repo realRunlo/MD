@@ -13,7 +13,6 @@
 
 
 
-
 /*
     Função leRle
     Recebe
@@ -23,15 +22,11 @@
 */
 
 void processaRle(char* filenameRle, char* filenameFreq) {
-    FILE* fpRLE;
     char* originalFilename = (char*)malloc(sizeof(char) * strlen(filenameRle) - 4);
-    char* bloco;
     int nBlocos;
     int* tamanhos;
 
     cortaSufixo(filenameRle,originalFilename,5); //retira .rle
-    printf("%s",originalFilename);
-
 
     tamanhos = lerFC(filenameFreq, &nBlocos);          // Array com tamanhos dos blocos
 
@@ -86,54 +81,49 @@ void processaRle(char* filenameRle, char* filenameFreq) {
     Lê um cod e guarda os codigos, lê um shaf e descodifica os blocos em paralelo
 */
 char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
+    char** blocos;
     char* escritaFilename = (char*)malloc(sizeof(char) * strlen(filenameCod) - 3);
-    char ** blocos;
+    cArray** codigos;
+    int* tamanhosCod, * tamanhosShaf, * maxBits;
     int nBlocos;
-    int* tamanhosCod;
-    int* tamanhosShaf;
-    int * maxBits;
 
-    cortaSufixo(filenameShaf,escritaFilename,6);   //cortar sufixo .shaf\0 ,obter nome onde vai escrever descodificado
-    
-    
- 
+    cortaSufixo(filenameShaf,escritaFilename,6);                //cortar sufixo .shaf\0 ,obter nome onde vai escrever descodificado
+
     maxBits =  lerCodNblocos(filenameCod,&nBlocos,tipo);          // ler numero de blocos
-   
-    printf("Numero blocos:%d\n",nBlocos);
-    
-    
-    int** codigos = (int**)malloc(sizeof(int*) * nBlocos);
+
+    codigos = (cArray**)malloc(sizeof(cArray*) * nBlocos);
     tamanhosCod = (int*)malloc(sizeof(int) * nBlocos);
     tamanhosShaf = (int*)malloc(sizeof(int) * nBlocos);
-    FILE *fpCod = fopen(filenameCod,"r");
+
+    FILE *fpCod = fopen(filenameCod,"rb");
     fgetc(fpCod);
 
     for(int i=0;i<nBlocos;i++){
-
-        if(maxBits[i] > 8){  
-         codigos[i] = (int*)malloc(sizeof(int) * pow(2,maxBits[i]));      //alocar espaço para os 256 codigos
+        if(maxBits[i] > 8){
+            codigos[i] = (cArray*)malloc(sizeof(cArray) * (int)pow(2,maxBits[i]));
         }else{
-             codigos[i] = (int*)malloc(sizeof(int) * 256); 
+            codigos[i] = (cArray*)malloc(sizeof(cArray) * 256);
         }
     }
-    printf("memaloc\n");
+
     for(int i=0;i<nBlocos;i++){
+        cArray elemento = { -1,-1 };
         if(maxBits[i] > 8){ 
-        for(int j=0;j<pow(2,maxBits[i]);j++){
-            codigos[i][j] = -1;
+            for(int j=0;j<(int)pow(2,maxBits[i]);j++){
+                codigos[i][j] = elemento;
+            }
         }
-        }else{
+        else{
             for(int j=0;j<256;j++){
-            codigos[i][j] = -1;
-        }
+                codigos[i][j] = elemento;
+            }
         }
     }
-
 
     lerCodigos(filenameCod, codigos, tamanhosCod);
-    printf("li codigos\n");
+
     blocos = lerShaf(filenameShaf,tamanhosShaf);
-    printf("leu blocos\n");
+
     pthread_t* thread = (pthread_t*)malloc(sizeof(pthread_t) * nBlocos);
 
     for (int i = 0; i < nBlocos; i++) {
@@ -178,7 +168,7 @@ void mensagemFim(int tempo,int *tamanhos,int* tamDescomp,int nBlocos){
         printf("Tamanho antes/depois do ficheiro gerado (bloco %d): %d/%d\n",i+1,tamanhos[i],tamDescomp[i]);
     }
     printf("Tempo de execução do modulo (milissegundos): %d\n",tempo);
-    printf("Ficheiro gerado: %s");
+    printf("Ficheiro gerado: %s\n");
 
 
 

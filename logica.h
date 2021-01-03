@@ -7,6 +7,12 @@
 #define ___logica_h___
 #include <stdio.h>
 #include <stdlib.h>
+
+typedef struct codeArray {
+    int simbolo;
+    int tamanho;
+}cArray;
+
 typedef struct argDescompBloco {
 
     char* filename;
@@ -32,7 +38,7 @@ typedef struct argDescodSahf{
     int tamanho;
     int tamanhoDescod;
     int offset;
-    int * codigos;
+    cArray * codigos;
     char tipo;
 }argDS;
 

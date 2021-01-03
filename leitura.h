@@ -12,7 +12,7 @@
 int* lerFC(char* filename, int* nBlocos);
 void leBloco(argLB* arg);
 int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c);
-void lerCodigos(char* filenameCod, int** codigos, int* tamanhos);
+void lerCodigos(char* filenameCod, cArray** codigos, int* tamanhos);
 char **lerShaf(char* filenameShaf,int *tamanhosShaf);
 
 

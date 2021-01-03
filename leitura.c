@@ -105,15 +105,14 @@ int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c) {
         fscanf(fpCod,"%d",&temp);                       //tamanho
         fgetc(fpCod);                            
         max[i] = get_maxBits(simbolos,fpCod);
-        printf("%d\n",max[i]);
     }
     fclose(fpCod);
     return max;
 }
 
-void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
+void lerCodigos(char* filenameCod, cArray** codigos, int* tamanhos) {
     char c = 'R', tipo;
-    char seq[16];
+    char seq[32];
     int nBlocos,codPosicao=0, codTamanho = 0, i=0, counter = 0;
     FILE* fpCOD = fopen(filenameCod, "r");
 
@@ -125,12 +124,15 @@ void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
 
     do {
         fscanf(fpCOD, "%d", &tamanhos[i]);
-        fgetc(fpCOD);                           //le o @ 
+        fgetc(fpCOD);                           //le o @
         while (c != '@') {
             c = fgetc(fpCOD);
             if (c == ';' || c == '@'){
                 if (codTamanho != 0) {
-                    codigos[i][binToInt(seq, codTamanho)] = codPosicao;
+                    cArray elemento;
+                    elemento.simbolo = codPosicao;
+                    elemento.tamanho = codTamanho;
+                    codigos[i][binToInt(seq, codTamanho)] = elemento;
                     codTamanho = 0;
                 }
                 codPosicao++;
@@ -138,7 +140,6 @@ void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
             else {
                  seq[codTamanho++] = c;
             }
-            
         }
         c = 'R';
         i++;
@@ -158,8 +159,9 @@ void lerCodigos(char* filenameCod, int** codigos, int* tamanhos) {
 char **lerShaf(char* filenameShaf,int *tamanhosShaf) {
     int nBlocos,i=0;
     int tamanhoLido = 0;
-    char c,cTemp;
+    char c;
     FILE * fp = fopen(filenameShaf,"rb");
+
     fgetc(fp);              //le @
     fscanf(fp,"%d",&nBlocos);   //le numero de blocos
     fgetc(fp);              //le @
@@ -173,11 +175,7 @@ char **lerShaf(char* filenameShaf,int *tamanhosShaf) {
         blocos[i] = (char*)malloc(sizeof(char)*(tamanhosShaf[i]));
  
         tamanhoLido = fread(blocos[i],sizeof(char),tamanhosShaf[i],fp);
-        printf("Tamanho bloco %d => %d : %d\n",i,tamanhoLido,tamanhosShaf[i]);
-        /*
-        cTemp = getc(fp);
-        fseek(fp,1,SEEK_CUR);
-        */
+        
         fgetc(fp);                          //le @ 
         i++;
     }while(i<nBlocos);
