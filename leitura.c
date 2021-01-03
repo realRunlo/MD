@@ -92,7 +92,7 @@ void leBloco(argLB* arg) {
 */
 int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c) {
     FILE* fpCod = fopen(filenameCod, "r");
-    int simbolos[256],temp;
+    int temp;
 
     fgetc(fpCod);                               //le o @
     fscanf(fpCod,"%c",c);                       //guardar o tipo do ficheiro rle|n
@@ -105,7 +105,7 @@ int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c) {
     for(int i=0;i<(*nBlocos);i++){
         fscanf(fpCod,"%d",&temp);                       //tamanho
         fgetc(fpCod);                            
-        max[i] = get_maxBits(simbolos,fpCod);
+        max[i] = get_maxBits(fpCod);
     }
     fclose(fpCod);
     return max;

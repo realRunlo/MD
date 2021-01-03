@@ -14,7 +14,7 @@
 int main(int argc, char **argv){
     //exeR("aaa.txt.rle");                  //Funciona most of the time :')
     //exeS("Shakespeare.txt.shaf");                   //Funciona
-    exeNormal("Shakespeare.txt.rle.shaf");
+    //exeNormal(argv[1]);
 
 
 return 0;

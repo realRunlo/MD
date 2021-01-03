@@ -132,6 +132,6 @@ void descodShaf(argDS * arg);
 void exeNormal(char *filenameShaf);
 void exeS(char *filenameShaf);
 void exeR(char *filenameRle);
-int get_maxBits (int *symbols, FILE *fp_cod );
+int get_maxBits (FILE *fp_cod );
 
 #endif // ___logica_h___
