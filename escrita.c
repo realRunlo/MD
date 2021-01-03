@@ -170,17 +170,18 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
     - array com os tamanhos antes
     - array com tamanhos depois descompressão
     - número de blocos
+    - nome do ficheiro produzido
     Imprime na consola mensagem no fim de execução do modulo
 */
 void mensagemFim(int timer, int *tam, int *tamDescomp, int nBlocos, char* ficheiro){
     printf("====================SUCESSO====================\n");
-    printf("Gonçalo Pereira & José Gomes,a93168,  , MIEI/CD\n");
-    printf("Modulo: D (descodificação)\n");
-    printf("Número de blocos: %d\n",nBlocos);
+    printf("Goncalo Pereira & Jose Gomes,a93168,a82418, MIEI/CD\n");
+    printf("Modulo: D (descodificacao)\n");
+    printf("Numero de blocos: %d\n",nBlocos);
     for(int i=0;i<nBlocos;i++){
         printf("Tamanho antes/depois do ficheiro gerado (bloco %d): %d/%d\n",i+1,tam[i],tamDescomp[i]);
     }
-    printf("Tempo de execução do modulo: %d segundos e %d milisegundos\n",timer/1000, timer%1000);
+    printf("Tempo de execucao do modulo: %d segundos e %d milisegundos\n",timer/1000, timer%1000);
     printf("Ficheiro gerado: %s\n", ficheiro);
 
 

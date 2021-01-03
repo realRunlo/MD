@@ -50,10 +50,8 @@ int calculaOffset(int* tamanhos, int i) {
 /*
     Função descompBlocoRle
     Recebe
-    - Apontador para o ficheiro TXT
-    - String com o conteúdo do bloco a descomprimir
-    - Tamanho do bloco em Bytes
-    Imprime no ficheiro TXT o conteúdo descomprimido do bloco.
+    - Estrutura argDescompBloco
+    Imprime no ficheiro TXT o conteúdo descomprimido de um bloco.
 */
 void descompBlocoRle(argDB* arg){
     
@@ -79,6 +77,13 @@ void descompBlocoRle(argDB* arg){
     free(arg->bloco);
     free(arg);
 }
+
+/*
+    Função descodShaf
+    Recebe
+    - Estrutura argDescodBloco
+    Imprime no ficheiro TXT o conteúdo descodificado de um bloco.
+*/
 
 void descodShaf(argDS * arg) {
      FILE * fpTXT;
@@ -185,6 +190,13 @@ void descodShaf(argDS * arg) {
     free(arg);
 }
 
+/*
+    Função binToInt
+    Recebe
+    - String seq, sequência de bits a traduzir para decimal
+    - Tamanho da sequência de bits.
+    Devolve a tradução decimal de uma sequência de bits.
+*/
 
 int binToInt(char* seq, int tamanho) {
     int decimal = 0;
@@ -196,7 +208,13 @@ int binToInt(char* seq, int tamanho) {
     return decimal;
 }
 
-//esta execução só aplica processaShaf e processaRle ou seja o ficheiro resultante é original
+/*
+    Função exeNormal
+    Recebe
+    - Nome de um ficheiro .shaf
+    Executa a descodificação shaf num ficheiro e se necessário a descompressão rle. O ficheiro resultante é do formato .txt
+*/
+
 void exeNormal(char* filenameShaf) {
     clock_t tempo = clock();
     char* filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) - 1);
@@ -220,7 +238,13 @@ void exeNormal(char* filenameShaf) {
     }
 }
 
-//esta execução só aplica processaShaf ou seja o que é gerado ou é original ou um rle
+/*
+    Função exeS
+    Recebe
+    - Nome de um ficheiro .shaf
+    Executa a descodificação shaf num ficheiro. O ficheiro resultante é do formato .txt ou .rle
+*/
+
 void exeS(char *filenameShaf){
     clock_t tempo = clock();
     char *filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) - 1 );
@@ -236,6 +260,13 @@ void exeS(char *filenameShaf){
     mensagem.timer = (clock() - tempo) * 1000 / CLOCKS_PER_SEC;
     mensagemFim(mensagem.timer, mensagem.tamSHAF, mensagem.tamDescompSHAF, mensagem.nBlocos, mensagem.ficheiroSHAF);
 }
+
+/*
+    Função exeR
+    Recebe
+    - Nome de um ficheiro .rle
+    Executa a descompressão rle. O ficheiro resultante é do formato .txt
+*/
 
 void exeR(char* filenameRle) {
     clock_t tempo = clock();
@@ -256,6 +287,13 @@ void exeR(char* filenameRle) {
     mensagemFim(mensagem.timer, mensagem.tamRLE, mensagem.tamDescompRLE, mensagem.nBlocos, mensagem.ficheiroRLE);
 }
 
+/*
+    Função get_maxBits
+    Recebe
+    - Lista de simbolos
+    - Apontador para um ficheiro .cod
+    Devolve o tamanho do maior código de um determinado bloco.
+*/
 
 int get_maxBits (int *symbols, FILE *fp_cod ){
     int maxBits = 0, id_bits = 0, symbol = 0, block_not_over = 1; //true

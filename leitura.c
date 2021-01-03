@@ -19,6 +19,7 @@
     Retorna
     - Array com os tamanhos dos blocos em bytes
 */
+
 int* lerFC(char* filenameFC, int* nBlocos) {
     char tipo, c = 'R';
     int i = 0;
@@ -110,6 +111,15 @@ int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c) {
     return max;
 }
 
+/*
+    Função lerCodigos
+    Recebe
+    - Nome de um ficheiro .cod
+    - Array de estruturas onde se guardará a descodificação do código e o seu tamanho, no indice do próprio código
+    Guarda num array todos as descodificações dos códigos e os seus tamanhos. 
+*/
+
+
 void lerCodigos(char* filenameCod, cArray** codigos, int* tamanhos) {
     char c = 'R', tipo;
     char seq[32];
@@ -149,13 +159,14 @@ void lerCodigos(char* filenameCod, cArray** codigos, int* tamanhos) {
 }
 
 /*
-    Função lerCodNblocos
+    Função lerShaf
     Recebe
-    - nome do ficheiro shaf
-    - array com os tamanhos dos blocos
-    Retorna
-    - os blocos de sequencias binárias codificadas shaf
+    - Nome de um ficheiro .shaf
+    - Lista de tamanhos dos blocos
+    Guarda numa lista todos os blocos de um determinado ficheiro .shaf
 */
+
+
 char **lerShaf(char* filenameShaf,int *tamanhosShaf) {
     int nBlocos,i=0;
     char c;
