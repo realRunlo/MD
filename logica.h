@@ -8,6 +8,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct printMessage {
+    char* ficheiroRLE;
+    char* ficheiroSHAF;
+    int timer;
+    int nBlocos;
+    int* tamRLE;
+    int* tamSHAF;
+    int* tamDescompRLE;
+    int* tamDescompSHAF;
+    
+}pMessage;
+
+extern pMessage mensagem;
+
 typedef struct codeArray {
     int simbolo;
     int tamanho;

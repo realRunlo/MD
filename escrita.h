@@ -16,7 +16,7 @@
 
 
 void processaRle(char* filename, char* filenameFreq);
-void mensagemFim(int tempo,int *tamanhos,int* tamDescomp,int nBlocos);
+void mensagemFim(int timer, int* tam, int* tamDescomp, int nBlocos, char* ficheiro);
 char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo);
 
 

@@ -93,7 +93,7 @@ int * lerCodNblocos(char* filenameCod, int * nBlocos,char *c) {
     FILE* fpCod = fopen(filenameCod, "r");
     int simbolos[256],temp;
 
-    fgetc(fpCod);                               //le o @ 
+    fgetc(fpCod);                               //le o @
     fscanf(fpCod,"%c",c);                       //guardar o tipo do ficheiro rle|n
     fgetc(fpCod);                               //le o @ 
     fscanf(fpCod, "%d",nBlocos);                //guardar numero de blocos 
@@ -158,7 +158,6 @@ void lerCodigos(char* filenameCod, cArray** codigos, int* tamanhos) {
 */
 char **lerShaf(char* filenameShaf,int *tamanhosShaf) {
     int nBlocos,i=0;
-    int tamanhoLido = 0;
     char c;
     FILE * fp = fopen(filenameShaf,"rb");
 
@@ -174,11 +173,12 @@ char **lerShaf(char* filenameShaf,int *tamanhosShaf) {
 
         blocos[i] = (char*)malloc(sizeof(char)*(tamanhosShaf[i]));
  
-        tamanhoLido = fread(blocos[i],sizeof(char),tamanhosShaf[i],fp);
+        fread(blocos[i],sizeof(char),tamanhosShaf[i],fp);
         
         fgetc(fp);                          //le @ 
         i++;
     }while(i<nBlocos);
+
     fclose(fp);
     return blocos;
 }

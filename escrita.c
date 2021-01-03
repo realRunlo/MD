@@ -67,9 +67,11 @@ void processaRle(char* filenameRle, char* filenameFreq) {
         if (rt == 0)
             i++;
     }
+    mensagem.tamRLE = tamanhos;
+    mensagem.tamDescompRLE = tamDescomp;
+    mensagem.nBlocos = nBlocos;
+    mensagem.ficheiroRLE = originalFilename;
 
-    free(tamanhos);
-    free(tamDescomp);
     free(thread);
     free(blocos);
 }
@@ -146,9 +148,13 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
             i++;
     }
 
+
+    mensagem.tamSHAF = tamanhosShaf;
+    mensagem.tamDescompSHAF = tamanhosCod;
+    mensagem.nBlocos = nBlocos;
+    mensagem.ficheiroSHAF = escritaFilename;
+
     free(codigos);
-    free(tamanhosCod);
-    free(tamanhosShaf);
     free(maxBits);
     free(thread);
 
@@ -166,16 +172,16 @@ char * processaShaf(char* filenameCod, char* filenameShaf,char *tipo) {
     - número de blocos
     Imprime na consola mensagem no fim de execução do modulo
 */
-void mensagemFim(int tempo,int *tamanhos,int* tamDescomp,int nBlocos){
+void mensagemFim(int timer, int *tam, int *tamDescomp, int nBlocos, char* ficheiro){
     printf("====================SUCESSO====================\n");
     printf("Gonçalo Pereira & José Gomes,a93168,  , MIEI/CD\n");
     printf("Modulo: D (descodificação)\n");
     printf("Número de blocos: %d\n",nBlocos);
     for(int i=0;i<nBlocos;i++){
-        printf("Tamanho antes/depois do ficheiro gerado (bloco %d): %d/%d\n",i+1,tamanhos[i],tamDescomp[i]);
+        printf("Tamanho antes/depois do ficheiro gerado (bloco %d): %d/%d\n",i+1,tam[i],tamDescomp[i]);
     }
-    printf("Tempo de execução do modulo (milissegundos): %d\n",tempo);
-    printf("Ficheiro gerado: %s\n");
+    printf("Tempo de execução do modulo: %d segundos e %d milisegundos\n",timer/1000, timer%1000);
+    printf("Ficheiro gerado: %s\n", ficheiro);
 
 
 

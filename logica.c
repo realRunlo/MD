@@ -4,10 +4,14 @@
 */
 #include "leitura.h"
 #include "escrita.h"
+#include "logica.h"
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+
+pMessage mensagem;
 
 /*
     Função cortaSufixo
@@ -54,7 +58,9 @@ int calculaOffset(int* tamanhos, int i) {
 void descompBlocoRle(argDB* arg){
     
     FILE* fpTXT = fopen(arg->filename, "w");
-    fseek(fpTXT, arg->offset, 0);
+    if (arg->offset != 0) {
+        fseek(fpTXT, arg->offset, 0);
+    }
     char letra, nreps;
 
     for (int i = 0; i < arg->tamanho; i++) {
@@ -191,36 +197,48 @@ int binToInt(char* seq, int tamanho) {
 }
 
 //esta execução só aplica processaShaf e processaRle ou seja o ficheiro resultante é original
-void exeNormal(char *filenameShaf){
-    char *filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) - 1 );
-    char tipo,cod[5] = ".cod\0";
+void exeNormal(char* filenameShaf) {
+    clock_t tempo = clock();
+    char* filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) - 1);
+    char tipo, cod[5] = ".cod\0";
     char* filenameNR;
 
-    cortaSufixo(filenameShaf,filenameCod,6);   //cortar sufixo .shaf\0
-       
-    strcat(filenameCod,cod);                    //adiciona .cod\0            
-    
-    filenameNR = processaShaf(filenameCod,filenameShaf,&tipo);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
+    cortaSufixo(filenameShaf, filenameCod, 6);   //cortar sufixo .shaf\0
 
-    if (tipo =='R'){
-        processaRle(filenameNR, filenameCod);          
+    strcat(filenameCod, cod);                    //adiciona .cod\0            
+
+    filenameNR = processaShaf(filenameCod, filenameShaf, &tipo);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
+    if (tipo == 'R') {
+        processaRle(filenameNR, filenameCod);
+
+        mensagem.timer = (clock() - tempo) * 1000 / CLOCKS_PER_SEC;
+        mensagemFim(mensagem.timer, mensagem.tamSHAF, mensagem.tamDescompRLE, mensagem.nBlocos, mensagem.ficheiroRLE);
+    }
+    else {
+        mensagem.timer = (clock() - tempo) * 1000 / CLOCKS_PER_SEC;
+        mensagemFim(mensagem.timer, mensagem.tamSHAF, mensagem.tamDescompSHAF, mensagem.nBlocos, mensagem.ficheiroSHAF);
     }
 }
 
 //esta execução só aplica processaShaf ou seja o que é gerado ou é original ou um rle
 void exeS(char *filenameShaf){
+    clock_t tempo = clock();
     char *filenameCod = (char*)malloc(sizeof(char) * strlen(filenameShaf) - 1 );
     char tipo,cod[5] = ".cod\0";
     char* filenameNR;
 
     cortaSufixo(filenameShaf,filenameCod,6);   //cortar sufixo .shaf\0
-  
-    strcat(filenameCod,cod);                    //adiciona .cod\0             
-    
+ 
+    strcat(filenameCod,cod);                    //adiciona .cod\0          
+   
     filenameNR = processaShaf(filenameCod,filenameShaf,&tipo);  //ou escreve o original ou vai escrver um rle,dava jeito ser returnado onde escrveu
+
+    mensagem.timer = (clock() - tempo) * 1000 / CLOCKS_PER_SEC;
+    mensagemFim(mensagem.timer, mensagem.tamSHAF, mensagem.tamDescompSHAF, mensagem.nBlocos, mensagem.ficheiroSHAF);
 }
 
 void exeR(char* filenameRle) {
+    clock_t tempo = clock();
     char* filenameFreq = (char*)malloc(sizeof(char) * strlen(filenameRle) + 4);
     char tipo, freq[6] = ".freq\0";
     int i;
@@ -233,7 +251,9 @@ void exeR(char* filenameRle) {
     strcat(filenameFreq,freq);   //adiciona sufixo .freq
 
     processaRle(filenameRle,filenameFreq);
-
+    
+    mensagem.timer = (clock() - tempo) * 1000 / CLOCKS_PER_SEC;
+    mensagemFim(mensagem.timer, mensagem.tamRLE, mensagem.tamDescompRLE, mensagem.nBlocos, mensagem.ficheiroRLE);
 }
 
 
